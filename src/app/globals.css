@@ -1,26 +1,84 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Colour */
+  --color-ink:          #14110D;
+  --color-panel:        #1F1B15;
+  --color-panel-hover:  #2A241B;
+  --color-paper:        #F4EFE4;
+  --color-paper-tint:   #E8E0CF;
+  --color-accent:       #F2B32C;
+  --color-accent-ink:   #2A1C05;
+  --color-line:         #332C22;
+  --color-line-light:   #DCD3C2;
+  --color-dim:          #A39A88;
+  --color-dim-light:    #5C544A;
+  --color-danger:       #B5321C;
+
+  /* Type families, wired to next/font in layout.tsx */
+  --font-display: var(--font-barlow-condensed), "Arial Narrow", sans-serif;
+  --font-sans:    var(--font-dm-sans), Arial, sans-serif;
+
+  /* Spacing scale, 4px base */
+  --spacing-section:    6rem;   /* 96px desktop section rhythm */
+  --spacing-section-sm: 3.75rem; /* 60px mobile */
+
+  /* Radius */
+  --radius-control: 3px;
+  --radius-card:    5px;
+  --radius-modal:   6px;
+
+  /* Type scale. Tailwind v4 pairs each --text-* size with its own
+     --line-height and --letter-spacing, so text-display-xl etc. carry
+     the whole style, not just a font-size. */
+  --text-display-xl: clamp(66px, 8.5vw, 124px);
+  --text-display-xl--line-height: 0.97;
+  --text-display-xl--letter-spacing: -1.5px;
+
+  --text-display-lg: clamp(42px, 5vw, 68px);
+  --text-display-lg--line-height: 1;
+  --text-display-lg--letter-spacing: -1.2px;
+
+  --text-display-md: clamp(32px, 3.5vw, 46px);
+  --text-display-md--line-height: 1.05;
+  --text-display-md--letter-spacing: -1px;
+
+  --text-heading: clamp(20px, 2.5vw, 27px);
+  --text-heading--line-height: 1.25;
+  --text-heading--letter-spacing: -0.6px;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.75;
+
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1.4;
+  --text-eyebrow--letter-spacing: 1.8px;
+
+  --text-micro: 0.75rem;
+  --text-micro--line-height: 1.4;
+  --text-micro--letter-spacing: 1.2px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer utilities {
+  /* Registration reveal, DESIGN.md section 5. The unclassed element carries
+     no clip-path, so it renders fully visible with no JS at all. Only once
+     the IntersectionObserver hook adds .is-visible does the keyframe run,
+     and it runs forward from a clipped starting keyframe, not from a
+     pre-hidden element. A slow or blocked script just means no wipe. */
+  .reveal.is-visible {
+    animation: registration-reveal 600ms ease-out;
+  }
+  @keyframes registration-reveal {
+    from { clip-path: inset(0 100% 0 0); }
+    to   { clip-path: inset(0 0 0 0); }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media (prefers-reduced-motion: reduce) {
+  .reveal.is-visible {
+    animation: none !important;
+  }
 }
