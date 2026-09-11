@@ -1,0 +1,36 @@
+# Planning and working docs, local only
+CLAUDE.md
+IMPLEMENTATION.md
+DESIGN.md
+copy-deck.md
+mockups/
+notes/
+*.local.md
+
+# Next.js
+/.next/
+/out/
+/build
+next-env.d.ts
+
+# Dependencies
+/node_modules
+.pnp
+.pnp.js
+
+# Env
+.env
+.env*.local
+
+# Deploy
+.vercel/
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+npm-debug.log*
+yarn-error.log*
