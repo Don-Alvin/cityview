@@ -1,22 +1,22 @@
 /**
- * Stands in for real photography wherever the mockup carries a shot.
- * IMPLEMENTATION.md: the shoot is confirmed but not delivered, and the
- * hard rule against shipping unread text in images means the mockup's
- * placeholder concept imagery cannot travel into production as-is. This
- * renders the correct box (aspect ratio, radius) with a plain label so
- * layout is real now and next/image drops in later without touching
- * spacing.
+ * Stands in for real photography (final_design.html's own images, and
+ * any future CityView shots) wherever a slot doesn't have a file yet.
+ * CLAUDE.md's rule against unread text in shipped images means the
+ * mockup's inlined images can't travel across as-is even where a
+ * plausible substitute exists; this renders the correct box (size,
+ * radius) with a plain label so layout is real now and next/image drops
+ * in later without touching spacing.
  */
 const tones = {
-  light: "border-line-light bg-paper-tint text-dim-light",
-  dark: "border-line bg-panel text-dim",
+  light: "border-hairline bg-surface text-ink-soft",
+  dark: "border-white/20 bg-white/10 text-white/70",
 };
 
 export function PhotoPlaceholder({
   label,
   className = "",
   rounded = "rounded-card",
-  tone = "dark",
+  tone = "light",
 }: {
   label: string;
   className?: string;
@@ -28,9 +28,7 @@ export function PhotoPlaceholder({
     <div
       className={`flex items-center justify-center border text-center ${border} ${bg} ${rounded} ${className}`}
     >
-      <span className={`px-4 text-[12px] leading-[1.4] tracking-[1.2px] ${text}`}>
-        {label}
-      </span>
+      <span className={`px-3 text-eyebrow ${text}`}>{label}</span>
     </div>
   );
 }

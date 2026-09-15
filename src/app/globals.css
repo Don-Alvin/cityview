@@ -1,84 +1,365 @@
 @import "tailwindcss";
 
 @theme {
-  /* Colour */
-  --color-ink:          #14110D;
-  --color-panel:        #1F1B15;
-  --color-panel-hover:  #2A241B;
-  --color-paper:        #F4EFE4;
-  --color-paper-tint:   #E8E0CF;
-  --color-accent:       #F2B32C;
-  --color-accent-ink:   #2A1C05;
-  --color-line:         #332C22;
-  --color-line-light:   #DCD3C2;
-  --color-dim:          #A39A88;
-  --color-dim-light:    #5C544A;
-  --color-danger:       #B5321C;
-
-  /* Type families, wired to next/font in layout.tsx */
-  --font-display: var(--font-barlow-condensed), "Arial Narrow", sans-serif;
-  --font-sans:    var(--font-dm-sans), Arial, sans-serif;
-
-  /* Spacing scale, 4px base */
-  --spacing-section:    6rem;   /* 96px desktop section rhythm */
-  --spacing-section-sm: 3.75rem; /* 60px mobile */
+  /* Colour. Brand colours are under review with the client (CLAUDE.md):
+     every colour in a component must read from one of these tokens,
+     never a hardcoded hex, so the whole site repaints from one edit. */
+  --color-background:   #ffffff;
+  --color-surface:      #f3f1ed;
+  --color-surface-card: #ffffff;
+  --color-brand:        #eaa221;
+  --color-brand-light:  #ffc455;
+  --color-brand-deep:   #141312;
+  --color-accent:       #9e5b16;
+  --color-ink:          #0a0a0a;
+  --color-ink-soft:     #76736c;
+  --color-ghost:        #d9d7d1;
+  --color-hairline:     #e5e2dc;
+  --color-on-brand:     #ffffff;
 
   /* Radius */
-  --radius-control: 3px;
-  --radius-card:    5px;
-  --radius-modal:   6px;
+  --radius-card:    1.5rem;
+  --radius-card-lg: 2rem;
+  --radius-pill:    62.5rem;
+
+  /* Font, wired to next/font in layout.tsx. Onest only, weights 400/500. */
+  --font-sans: var(--font-onest), system-ui, sans-serif;
+
+  /* Easing */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);
 
   /* Type scale. Tailwind v4 pairs each --text-* size with its own
-     --line-height and --letter-spacing, so text-display-xl etc. carry
-     the whole style, not just a font-size. */
-  --text-display-xl: clamp(66px, 8.5vw, 124px);
-  --text-display-xl--line-height: 0.97;
-  --text-display-xl--letter-spacing: -1.5px;
+     --line-height and --letter-spacing, so e.g. text-section-title
+     carries the whole style, not just a font-size. `hero` is deliberately
+     absent here: it needs two different vw values at different
+     breakpoints, which this pairing mechanism can't express, so it's a
+     plain CSS utility below instead. */
+  --text-section-title: 3rem;
+  --text-section-title--line-height: 0.95;
+  --text-section-title--letter-spacing: -0.04em;
 
-  --text-display-lg: clamp(42px, 5vw, 68px);
-  --text-display-lg--line-height: 1;
-  --text-display-lg--letter-spacing: -1.2px;
+  --text-title-sm: 2.25rem;
+  --text-title-sm--line-height: 1;
+  --text-title-sm--letter-spacing: -0.03em;
 
-  --text-display-md: clamp(32px, 3.5vw, 46px);
-  --text-display-md--line-height: 1.05;
-  --text-display-md--letter-spacing: -1px;
+  --text-lead: 1.5rem;
+  --text-lead--line-height: 1.3;
+  --text-lead--letter-spacing: -0.02em;
 
-  --text-heading: clamp(20px, 2.5vw, 27px);
-  --text-heading--line-height: 1.25;
-  --text-heading--letter-spacing: -0.6px;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.6;
 
   --text-body: 1rem;
   --text-body--line-height: 1.6;
 
   --text-body-sm: 0.875rem;
-  --text-body-sm--line-height: 1.75;
+  --text-body-sm--line-height: 1.5;
 
   --text-eyebrow: 0.75rem;
   --text-eyebrow--line-height: 1.4;
-  --text-eyebrow--letter-spacing: 1.8px;
+  --text-eyebrow--letter-spacing: 0.22em;
+}
 
-  --text-micro: 0.75rem;
-  --text-micro--line-height: 1.4;
-  --text-micro--letter-spacing: 1.2px;
+/* Fluid root font-size, matching final_design.html's own technique and
+   DESIGN.md section 3's breakpoint list exactly (640/768/1024/1440/1920).
+   Every rem-based size in the type scale above scales automatically from
+   this, with no JS: the mockup also ran a resize-listener version of this
+   same idea (recomputing html.style.fontSize on every resize), which is
+   redundant once these five media queries are in place, so it's dropped
+   rather than ported: one less listener, same visual result. */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+@media (max-width: 1920px) {
+  html { font-size: 0.833333vw; }
+}
+@media (max-width: 1440px) {
+  html { font-size: 1.111111vw; }
+}
+@media (max-width: 1024px) {
+  html { font-size: 1.5625vw; }
+}
+@media (max-width: 640px) {
+  html { font-size: 4.444444vw; }
+}
+
+@layer base {
+  body {
+    background: var(--color-background);
+    color: var(--color-ink);
+  }
 }
 
 @layer utilities {
-  /* Registration reveal, DESIGN.md section 5. The unclassed element carries
-     no clip-path, so it renders fully visible with no JS at all. Only once
-     the IntersectionObserver hook adds .is-visible does the keyframe run,
-     and it runs forward from a clipped starting keyframe, not from a
-     pre-hidden element. A slow or blocked script just means no wipe. */
-  .reveal.is-visible {
-    animation: registration-reveal 600ms ease-out;
+  /* DESIGN.md section 3: page is a stack of rounded cards on a narrow
+     gutter, not full-bleed sections. This is the structural signature,
+     so it is a class on the root layout element, not a per-page choice. */
+  .page {
+    width: 100%;
+    overflow-x: clip;
+    padding: 0.5rem;
   }
-  @keyframes registration-reveal {
-    from { clip-path: inset(0 100% 0 0); }
-    to   { clip-path: inset(0 0 0 0); }
+  @media (min-width: 640px) {
+    .page { padding: 0.75rem; }
+  }
+
+  .card-section {
+    border-radius: var(--radius-card-lg);
+  }
+
+  /* DESIGN.md section 2: hero h1, one line, sized as large as the
+     viewport allows. font-size is computed as (available width after
+     padding) / (per-character width in em), the actual condition for
+     one-line fit, rather than a flat vw guess. Divisor 9.6 includes real
+     headroom over the initial 8.2 estimate, plus the available width is
+     further discounted by 4% as a rendering safety margin (subpixel
+     rounding, font hinting).
+
+     clamp()'s floor was 2.5rem, which turned out to be *larger* than
+     what the formula computes at real phone widths (at 393px wide, the
+     formula wants about 2.16rem): the floor was overriding the correct,
+     smaller, still-fitting value with an oversized one, which is what
+     caused the overflow on small screens specifically. Lowered to
+     1.5rem, comfortably below what any realistic phone width computes,
+     so the floor is a true last-resort safety net again, not something
+     that engages during normal use and fights the fluid formula. */
+  .text-hero {
+    font-size: clamp(1.5rem, calc((100vw - 3rem) * 0.96 / 9.6), 15rem);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+  }
+  @media (min-width: 640px) {
+    .text-hero { font-size: clamp(1.5rem, calc((100vw - 5rem) * 0.96 / 9.6), 15rem); }
+  }
+
+  /* Stats section values (DESIGN.md table: 3.75rem base, 4.5rem from
+     640px). Flat, unresponsive below 640px, this overlapped on narrow
+     phones ("CMYK" and "A0+" nearly touching): two per row with no
+     further shrinking as the phone gets narrower than whatever width
+     3.75rem was really sized for. Same fluid approach as .text-hero,
+     adapted for two grid columns: available width per stat is
+     (100vw - section padding - grid gap) / 2. Per-character coefficient
+     (~0.72em) is carried over from .text-hero's own calibration (9.6
+     divisor over "MAKE YOUR MARK"'s ~14 character-units), so it isn't a
+     fresh guess this time. clamp() still caps at the DESIGN.md value for
+     each tier; it's only ever smaller than that on a narrow phone. */
+  .text-stat {
+    font-size: clamp(1.5rem, calc(((100vw - 5rem) * 0.96) / 5.76), 3.75rem);
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+  @media (min-width: 640px) {
+    .text-stat { font-size: clamp(1.5rem, calc(((100vw - 7rem) * 0.96) / 5.76), 4.5rem); }
+  }
+
+  /* Eyebrow: uppercase label preceded by a brand dot (DESIGN.md section
+     4). .light is for dark (brand-deep) grounds. */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-ink-soft);
+  }
+  .eyebrow::before {
+    content: "";
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    background: var(--color-brand);
+    flex: none;
+  }
+  .eyebrow.light {
+    color: rgb(255 255 255 / 0.7);
+  }
+  .eyebrow.light::before {
+    background: var(--color-brand-light);
+  }
+
+  /* DESIGN.md section 5: reveal-on-scroll, driven by the useInView hook
+     adding .visible. Starts at opacity:0 (permitted here, unlike the
+     previous direction's hard "never invisible by default" rule. This
+     project's version is narrower: reveals may start hidden as long as
+     they resolve on a timer or IntersectionObserver entry, never on a
+     network response, and reduced-motion always resolves them).
+
+     Scoped under `.js` (added by an early beforeInteractive script in
+     layout.tsx) rather than applying unconditionally: if JS never runs
+     at all, nothing would ever add .visible, and the content would stay
+     invisible forever, which is exactly what "never permanently
+     invisible" forbids. Without .js on <html>, .inview elements simply
+     never get the opacity:0 rule and render normally.
+
+     0.75s sits inside the 0.7-1.1s reveal window, at --ease-out-expo. */
+  .js .inview {
+    opacity: 0;
+    transform: translateY(2rem);
+    transition:
+      opacity 0.75s var(--ease-out-expo),
+      transform 0.75s var(--ease-out-expo);
+    transition-delay: var(--delay, 0ms);
+  }
+  .inview.visible {
+    opacity: 1;
+    transform: none;
+  }
+  .js .scale-in {
+    transform: scale(0.9);
+  }
+  .scale-in.visible {
+    transform: scale(1);
+  }
+
+  /* DESIGN.md section 5, reveal-word: hero h1 and section titles, per
+     word. Unlike .inview, this is a plain CSS @keyframes animation with
+     no JS gate at all: CSS animations run independent of script
+     execution, so "no preloader, runs immediately on load" is satisfied
+     for free, and there's no risk of permanent invisibility even if JS
+     never runs, because nothing here depends on JS in the first place. */
+  .clip {
+    display: inline-block;
+    overflow: hidden;
+    padding-bottom: 0.12em;
+    vertical-align: bottom;
+  }
+  .clip > span {
+    display: inline-block;
+    animation: reveal-word 1.1s var(--ease-out-expo) both;
+    animation-delay: var(--delay, 0ms);
+  }
+  @keyframes reveal-word {
+    from { transform: translateY(115%); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+
+  /* Preloader, ported from final_design.html's .loader at Alvin's
+     request (CLAUDE.md and DESIGN.md section 6 previously forbade it;
+     both updated). The mockup drove this from JS: wait for window.load,
+     add .done, remove the node, with a 4s timeout as a panic exit. That
+     is the part not ported. Waiting on window.load means waiting on every
+     image, which on mobile data is the multi-second stall DESIGN.md
+     objected to, and it leaves the whole page behind an opaque overlay if
+     the script never runs at all.
+
+     This version is a plain keyframe with `forwards`: it always starts,
+     always finishes, needs no JS, and cannot be left hanging. visibility
+     collapses at the end so the finished overlay can't swallow clicks.
+     Timings are the mockup's own: 1.4s hold, 0.85s exit, --ease-in-out. */
+  .loader {
+    position: fixed;
+    z-index: 200;
+    inset: 0;
+    background: var(--color-brand-deep);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    animation: loader-out 0.85s var(--ease-in-out) 1.4s forwards;
+  }
+  @keyframes loader-out {
+    to {
+      transform: translateY(-105%);
+      visibility: hidden;
+    }
+  }
+
+  .loader-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    animation: loader-brand 0.7s var(--ease-out-expo) both;
+  }
+  @keyframes loader-brand {
+    from { opacity: 0; transform: translateY(1rem); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .loader-track {
+    width: 10rem;
+    height: 1px;
+    background: rgb(255 255 255 / 0.2);
+    overflow: hidden;
+  }
+  .loader-fill {
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: load-line 1.28s 0.12s var(--ease-in-out) forwards;
+  }
+  @keyframes load-line {
+    to { transform: scaleX(1); }
+  }
+
+  /* The hero's word reveals are held until the overlay has started to
+     lift, so they play to a visible page rather than behind it. Pure
+     animation-delay, not the mockup's JS `.ready` class gate: the words
+     resolve on their own timer whatever happens to the script. */
+  .loader ~ .page .clip > span {
+    animation-delay: calc(1.5s + var(--delay, 0ms));
+  }
+
+  /* DESIGN.md section 5, ghost-in: oversized background lettering in the
+     trust section. Scoped under .js like .inview, for the same reason:
+     it starts hidden and only an observer entry (or reduced-motion)
+     brings it back. */
+  .js .ghost-word > span {
+    animation: ghost-in 0.7s var(--ease-out-expo) both paused;
+  }
+  .ghost-word.visible > span {
+    animation-play-state: running;
+  }
+  @keyframes ghost-in {
+    from { transform: translateY(115%); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
   }
 }
 
+/* Reduced-motion handling in one place (CHECKLIST section 1), rather than
+   scattered per-component overrides: every animation this file defines
+   disables here, and .inview/.scale-in resolve straight to their final
+   state so nothing is left mid-transition. */
 @media (prefers-reduced-motion: reduce) {
-  .reveal.is-visible {
-    animation: none !important;
+  html {
+    scroll-behavior: auto;
+  }
+  .inview,
+  .scale-in {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+  .clip > span,
+  .ghost-word > span {
+    animation-duration: 0.01ms !important;
+    animation-play-state: running !important;
+  }
+  /* The preloader still shows, briefly, rather than being skipped
+     outright: it is the brand intro Alvin asked for, and removing it
+     entirely here would mean two different first impressions. What goes
+     is the movement, matching the mockup's own reduced-motion handling
+     (.loader transition-duration:0s, .loader-fill animation .2s). */
+  .loader {
+    animation-delay: 0.2s;
+    animation-duration: 0.01ms;
+  }
+  .loader-brand {
+    animation-duration: 0.01ms;
+  }
+  .loader-fill {
+    animation-duration: 0.2s;
+    animation-delay: 0s;
+  }
+  .loader ~ .page .clip > span {
+    animation-delay: 0ms;
   }
 }

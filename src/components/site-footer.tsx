@@ -1,48 +1,140 @@
 import Link from "next/link";
-import { Container } from "./layout-primitives";
-import { contact } from "@/content/contact";
+import { QuoteTrigger } from "./quote-trigger";
+import { contact, whatsappLink } from "@/content/contact";
 
+const serviceLinks = [
+  { href: "/services/commercial-printing", label: "Commercial print" },
+  { href: "/services/branding-and-signage", label: "Branding & signage" },
+  { href: "/services/apparel-and-merchandise", label: "Merchandise" },
+  { href: "/services/custom-packaging", label: "Packaging" },
+];
+
+const companyLinks = [
+  { href: "/#trust", label: "Our approach" },
+  { href: "/work", label: "Our work" },
+  { href: "/#reviews", label: "Reviews" },
+];
+
+/**
+ * CLAUDE.md launch checklist: real phone number in header, footer and
+ * every service page, and WhatsApp click-to-chat as the primary path
+ * everywhere, neither of which final_design.html's footer shows at all
+ * (it only has an email address). Both added here alongside the
+ * mockup's own layout rather than replacing it.
+ */
 export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-auto bg-ink pt-14 text-paper">
-      <Container>
-        <div className="flex flex-wrap items-start justify-between gap-6">
-          <Link href="/" className="flex items-center gap-[11px] text-xl font-bold leading-none tracking-[-0.8px]">
-            <span aria-hidden="true" className="text-[46px] font-bold leading-[0.85] tracking-[-12px]">
-              c<i className="not-italic text-accent">v</i>
-            </span>
-            <span>
-              CITYVIEW
-              <small className="mt-[7px] block text-[10px] font-medium tracking-[4.3px]">
-                PRINTERS
-              </small>
-            </span>
+    <footer className="card-section mt-3 bg-brand-deep px-6 py-12 text-white sm:px-10">
+      <div className="flex flex-col gap-6 border-b border-white/15 pb-12 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <span className="eyebrow light text-eyebrow font-medium">Start a project</span>
+          <h2 className="mt-2 text-[3.75rem] font-medium leading-[0.92] tracking-[-0.04em]">
+            Ready to
+            <br />
+            make your mark?
+          </h2>
+        </div>
+        <div className="flex flex-wrap gap-4">
+          <Link
+            href={whatsappLink()}
+            className="inline-flex items-center gap-[0.55rem] rounded-pill bg-white px-7 py-[0.875rem] text-body-sm font-medium uppercase tracking-[0.07em] text-brand-deep hover:bg-brand"
+          >
+            Message us on WhatsApp
           </Link>
+          <QuoteTrigger variant="outline-light">Request a quote</QuoteTrigger>
+        </div>
+      </div>
 
-          <div className="text-right text-sm leading-[2] text-dim">
-            <Link href={contact.phoneHref} className="text-paper">
-              <b className="font-normal text-accent">Call</b> {contact.phoneDisplay}
+      <div className="grid gap-8 py-12 sm:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div className="max-w-[20rem]">
+          <span className="flex items-center gap-[0.55rem] text-[1.25rem] font-medium uppercase tracking-[0.2em]">
+            <span aria-hidden="true" className="flex h-5 w-5 items-end gap-[0.12rem]">
+              <i className="block h-[0.5rem] w-[0.22rem] bg-current" />
+              <i className="block h-[0.85rem] w-[0.22rem] bg-current" />
+              <i className="block h-[1.18rem] w-[0.22rem] bg-current" />
+              <i className="block h-[0.7rem] w-[0.22rem] bg-current" />
+            </span>
+            CityView
+          </span>
+          <p className="mt-4 text-body-sm leading-[1.7] text-white/65">
+            Printing and branding that turns ideas into tangible, memorable experiences.
+          </p>
+          <address className="mt-5 not-italic text-body-sm leading-[1.7]">
+            <a href={contact.phoneHref} className="block text-white/80 hover:text-white">
+              {contact.phoneDisplay}
+            </a>
+            <Link href={whatsappLink()} className="block text-white/80 hover:text-white">
+              WhatsApp: {contact.whatsappNumber}
             </Link>
-            <br />
-            <Link href={contact.whatsappHref} className="text-paper">
-              <b className="font-normal text-accent">WhatsApp</b> {contact.phoneDisplay}
-            </Link>
-            <br />
-            <Link href={`mailto:${contact.email}`} className="text-paper">
+            <a href={`mailto:${contact.email}`} className="block text-white/80 hover:text-white">
               {contact.email}
-            </Link>
-            <br />
-            <span>{contact.hours}</span>
-          </div>
+            </a>
+            <span className="block text-white/55">{contact.hoursDisplay}</span>
+          </address>
         </div>
 
-        <div className="mt-[34px] flex flex-col gap-2 border-t border-line py-7 text-micro text-dim sm:flex-row sm:justify-between">
-          <span>&copy; {year} CityView Printers</span>
-          <span>NAIROBI, KENYA</span>
-        </div>
-      </Container>
+        <nav aria-label="Services">
+          <h3 className="text-eyebrow font-medium text-white/50">Services</h3>
+          <ul className="mt-4 flex flex-col gap-3 text-body-sm text-white/80">
+            {serviceLinks.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="hover:text-white">
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <nav aria-label="Products">
+          <h3 className="text-eyebrow font-medium text-white/50">Products</h3>
+          <ul className="mt-4 flex flex-col gap-3 text-body-sm text-white/80">
+            <li>
+              <Link href="/#showcase" className="hover:text-white">
+                Business cards
+              </Link>
+            </li>
+            <li>
+              <Link href="/#showcase" className="hover:text-white">
+                Branded apparel
+              </Link>
+            </li>
+            <li>
+              <Link href="/#showcase" className="hover:text-white">
+                Display banners
+              </Link>
+            </li>
+          </ul>
+        </nav>
+
+        <nav aria-label="Company">
+          <h3 className="text-eyebrow font-medium text-white/50">Company</h3>
+          <ul className="mt-4 flex flex-col gap-3 text-body-sm text-white/80">
+            {companyLinks.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="hover:text-white">
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link href="/contact" className="hover:text-white">
+                Contact
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      {/* Social links and legal (Privacy/Terms) links both removed rather
+          than pointed at "#" or a page that doesn't exist yet
+          (IMPLEMENTATION.md launch checklist: real accounts and real
+          pages, or the footer links are removed) until either exists. */}
+      <div className="border-t border-white/15 pt-8 text-body-sm text-white/60">
+        <span>&copy; {year} CityView Printers. All rights reserved.</span>
+      </div>
     </footer>
   );
 }

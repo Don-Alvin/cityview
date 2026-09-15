@@ -1,10 +1,8 @@
 export type Service = {
   slug: string;
-  index: string;
   title: string;
-  /** Home page card copy. */
+  /** Home page row copy. */
   teaser: string;
-  tags: string[];
   /** Service page copy. */
   metaTitle: string;
   metaDescription: string;
@@ -18,59 +16,83 @@ export type Service = {
   priceFrom?: number;
 };
 
+/**
+ * Slugs, titles and teasers match IMPLEMENTATION.md's routes list and
+ * final_design.html's service rows exactly. The product lists below are
+ * written for this pass, not given anywhere in the mockup (it's a
+ * single-page site with one-line teasers, no service detail pages), so
+ * they're the same kind of placeholder-but-real content as the old
+ * three-service list before it: CHECKLIST.md's "Service list confirmed
+ * as four" and "Capability claims verified" pre-launch items cover
+ * confirming these are actually right, not inventing new ones later.
+ */
 export const services: Service[] = [
   {
-    slug: "print-and-paper",
-    index: "01",
-    title: "Print & paper",
-    teaser: "Make every introduction count with beautiful everyday print.",
-    tags: ["Business cards", "Flyers", "Brochures"],
-    metaTitle: "Print & Paper | Business Cards & Brochures in Nairobi",
+    slug: "commercial-printing",
+    title: "Commercial Printing",
+    teaser: "Business cards, flyers, brochures, booklets and office stationery.",
+    metaTitle: "Commercial Printing | Business Cards & Brochures in Kisumu",
     metaDescription:
-      "Business cards, flyers, brochures, booklets and packaging, printed in Nairobi. Beautiful, useful print for the moments that put your business in front of people.",
+      "Business cards, flyers, brochures, booklets and office stationery, printed in Kisumu. Beautiful, useful print for the moments that put your business in front of people.",
     intro:
       "Beautiful, useful print for the moments that put your business in front of people.",
     products: [
-      "Business cards and branded stationery",
-      "Flyers, brochures and promotional leaflets",
-      "Booklets, menus and presentation materials",
-      "Labels, stickers and paper-based packaging",
+      "Business cards",
+      "Flyers and leaflets",
+      "Brochures and booklets",
+      "Letterheads and envelopes",
+      "Menus and presentation materials",
+      "Stickers and labels",
     ],
   },
   {
     slug: "branding-and-signage",
-    index: "02",
-    title: "Branding & signage",
-    teaser: "Turn your space into a statement that's unmistakably yours.",
-    tags: ["Banners", "Shop signs", "Vehicle graphics"],
-    metaTitle: "Branding & Signage | Shopfronts & Banners in Nairobi",
+    title: "Branding & Signage",
+    teaser: "Shop signs, banners, vehicle graphics and event displays.",
+    metaTitle: "Branding & Signage | Shopfronts & Banners in Kisumu",
     metaDescription:
-      "Shopfront and indoor signage, roll-up banners, vehicle branding and window graphics in Nairobi. Give your business a visible, consistent presence, on the street or at your next event.",
+      "Shopfront signage, roll-up banners, vehicle branding and event displays in Kisumu. Give your business a visible, consistent presence, on the street or at your next event.",
     intro:
       "Give your business a visible, consistent presence, whether on the street or at your next event.",
     products: [
       "Shopfront and indoor signage",
       "Roll-up banners and event displays",
       "Vehicle branding and window graphics",
-      "Artwork and layout support for your project",
+      "Pull-up and pop-up stands",
+      "Directional and safety signage",
     ],
   },
   {
-    slug: "merch-and-packaging",
-    index: "03",
-    title: "Merch & packaging",
-    teaser: "Put your brand in their hands, and into their everyday.",
-    tags: ["Apparel", "Gift items", "Custom packaging"],
-    metaTitle: "Merch & Packaging | Branded Apparel & Packaging in Nairobi",
+    slug: "apparel-and-merchandise",
+    title: "Apparel & Merchandise",
+    teaser: "T-shirts, tote bags, mugs, caps and useful promotional items.",
+    metaTitle: "Apparel & Merchandise | Branded T-Shirts & Gifts in Kisumu",
     metaDescription:
-      "Branded T-shirts, tote bags, mugs and custom packaging in Nairobi. Make your identity part of someone's day with useful branded items and thoughtful presentation.",
+      "Branded T-shirts, caps, tote bags, mugs and promotional gifts in Kisumu. Make your identity part of someone's day with useful branded items.",
     intro:
       "Make your identity part of someone's day with useful branded items and thoughtful presentation.",
     products: [
-      "Branded T-shirts, caps and workwear",
-      "Tote bags and reusable carry bags",
-      "Mugs, notebooks and promotional gifts",
-      "Custom boxes, bags and packaging labels",
+      "Branded T-shirts and workwear",
+      "Caps and headwear",
+      "Tote bags",
+      "Mugs and drinkware",
+      "Notebooks and promotional gifts",
+    ],
+  },
+  {
+    slug: "custom-packaging",
+    title: "Custom Packaging",
+    teaser: "Boxes, bags, labels and branded packaging built around your product.",
+    metaTitle: "Custom Packaging | Branded Boxes & Bags in Kisumu",
+    metaDescription:
+      "Custom boxes, branded bags, product labels and packaging built around your product, printed in Kisumu. Every touchpoint carries the same identity.",
+    intro: "Packaging built around your product, carrying the same identity as everything else you make.",
+    products: [
+      "Custom boxes",
+      "Branded paper and gift bags",
+      "Product labels",
+      "Tissue paper and inserts",
+      "Mailer boxes",
     ],
   },
 ];
