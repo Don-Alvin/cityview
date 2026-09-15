@@ -6,9 +6,9 @@ export function Showcase() {
     <section
       id="showcase"
       aria-labelledby="showcase-title"
-      className="card-section -mt-10 bg-white px-6 py-16 sm:px-10"
+      className="card-section -mt-8 bg-white px-6 py-14 sm:px-10"
     >
-      <div className="grid gap-10 sm:grid-cols-2 sm:items-end">
+      <div className="grid gap-8 sm:grid-cols-2 sm:items-end">
         <InViewBox className="max-w-[24rem]">
           <div className="relative h-16 w-16 overflow-hidden rounded-card">
             {/* From the previous Skyline direction: carries that
@@ -17,12 +17,12 @@ export function Showcase() {
                 replaces it (see report.md). */}
             <Image src="/images/hero-5.png" alt="Branded mug" fill quality={80} sizes="4rem" className="object-cover" />
           </div>
-          <h2 id="showcase-title" className="mt-6 text-section-title font-medium">
+          <h2 id="showcase-title" className="mt-5 text-section-title font-medium">
             See your brand
             <br />
             in the real world
           </h2>
-          <p className="mt-6 max-w-[20rem] text-body-sm leading-[1.7] text-ink-soft">
+          <p className="mt-5 max-w-[20rem] text-body-sm leading-[1.7] text-ink-soft">
             Bring the same distinctive look to every touchpoint, from the things customers carry to the displays
             they see across the city.
           </p>

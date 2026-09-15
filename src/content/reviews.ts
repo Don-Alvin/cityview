@@ -19,7 +19,7 @@ export const reviews: Review[] = [
     quote:
       "The print quality made our launch feel complete. The colours, paper and finishing all worked together beautifully.",
     attribution: "Retail brand",
-    detail: "Nairobi",
+    detail: "Kisumu",
     placeholder: true,
   },
   {

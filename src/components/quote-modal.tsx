@@ -85,7 +85,7 @@ export function QuoteModal() {
       id="quote-modal"
       aria-labelledby="modal-title"
       onClose={resetAfterClose}
-      className="relative w-[calc(100%-1.5rem)] max-w-[32rem] rounded-card-lg bg-white p-6 text-ink backdrop:bg-brand-deep/40 sm:p-8"
+      className="relative w-[calc(100%-1.5rem)] max-w-[32rem] rounded-card-lg bg-white p-5 text-ink backdrop:bg-brand-deep/40 sm:p-7"
     >
       <button
         type="button"
@@ -101,7 +101,7 @@ export function QuoteModal() {
       <span className="eyebrow text-eyebrow font-medium">Request a quote</span>
 
       {status === "success" ? (
-        <div className="mt-6 rounded-card bg-surface p-6 text-center">
+        <div className="mt-5 rounded-card bg-surface p-5 text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand">
             <svg viewBox="0 0 24 24" width="24" fill="none" stroke="white" strokeWidth="2" aria-hidden="true">
               <path d="M5 13l4 4L19 7" />

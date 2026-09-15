@@ -10,12 +10,15 @@ export const contact = {
   phoneHref: "tel:TODO_PHONE",
   whatsappNumber: "TODO_WHATSAPP",
   email: "hello@cityviewprinters.co.ke",
-  hours: "Nairobi, Kenya",
-  openingHours: "Mo-Sa 08:00-18:00",
+  /** Human-readable, e.g. "Mon-Sat, 8am-6pm". Shown in the footer and on /contact. */
+  hoursDisplay: "TODO_HOURS",
+  /** schema.org PostalAddress/OpeningHours format, e.g. "Mo-Sa 08:00-18:00". */
+  openingHours: "TODO_HOURS",
   streetAddress: "TODO_ADDRESS",
-  addressLocality: "Nairobi",
+  addressLocality: "Kisumu",
   addressCountry: "KE",
   businessName: "CityView Printers",
+  foundedYear: "TODO_FOUNDED",
 };
 
 /**

@@ -54,7 +54,7 @@ function BrandLockup() {
  * A solid brand-deep background reads identically on a page with no
  * gradients anyway.
  */
-export function SiteHeader() {
+export function SiteHeader({ tone = "light" }: { tone?: "light" | "ink" }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
   const year = new Date().getFullYear();
@@ -92,12 +92,25 @@ export function SiteHeader() {
     window.scrollTo(0, scrollYRef.current);
   }
 
+  // On the home page this header sits inside the hero, over the photo, so
+  // it renders in white. Everywhere else it sits on the light page ground
+  // and has to invert, or it would be white text on white. Only the bar
+  // itself changes: the overlay menu is its own brand-deep surface either
+  // way.
+  const onDark = tone === "light";
+
   return (
     <>
-      <header className="flex items-center gap-4 px-6 pt-6 text-white sm:px-10 sm:pt-8">
+      <header
+        className={`flex items-center gap-4 px-6 pt-5 sm:px-10 sm:pt-8 ${onDark ? "text-white" : "text-ink"}`}
+      >
         <nav aria-label="Primary" className="hidden flex-1 gap-6 text-eyebrow lg:flex">
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="hover:text-brand-light">
+            <Link
+              key={link.href}
+              href={link.href}
+              className={onDark ? "hover:text-brand-light" : "hover:text-brand"}
+            >
               {link.label}
             </Link>
           ))}
@@ -121,14 +134,16 @@ export function SiteHeader() {
               CSS specificity, the exact bug the footer hover fix already
               ran into once. Wrapping avoids the fight entirely. */}
           <div className="hidden lg:block">
-            <Pill variant="light" onClick={openQuoteModal}>
+            <Pill variant={onDark ? "light" : "solid"} onClick={openQuoteModal}>
               Request a quote
             </Pill>
           </div>
           <a
             href={whatsappLink()}
             aria-label="Message CityView Printers on WhatsApp"
-            className="hidden h-10 w-10 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 lg:flex"
+            className={`hidden h-10 w-10 items-center justify-center rounded-full lg:flex ${
+              onDark ? "bg-white/15 hover:bg-white/25" : "bg-surface hover:bg-hairline"
+            }`}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 fill-current">
               <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.81L2 22l5.4-1.36a9.9 9.9 0 0 0 4.64 1.15h.01c5.46 0 9.9-4.45 9.9-9.91S17.5 2 12.04 2Zm0 18.06h-.01a8.14 8.14 0 0 1-4.14-1.13l-.3-.18-3.1.8.83-3.02-.19-.31a8.13 8.13 0 0 1-1.26-4.31c0-4.5 3.66-8.16 8.17-8.16 2.18 0 4.23.85 5.77 2.39a8.1 8.1 0 0 1 2.39 5.78c0 4.5-3.67 8.14-8.16 8.14Zm4.47-6.1c-.24-.12-1.45-.72-1.68-.8-.22-.08-.39-.12-.55.12-.16.24-.63.8-.78.97-.14.16-.28.18-.53.06-.24-.12-1.03-.38-1.96-1.21a7.36 7.36 0 0 1-1.35-1.69c-.14-.24-.01-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.42-.55-.42h-.47c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.45-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28Z" />
@@ -142,11 +157,13 @@ export function SiteHeader() {
             aria-label="Open menu"
             aria-expanded={open}
             aria-controls="mobile-menu"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 lg:hidden"
+            className={`flex h-10 w-10 items-center justify-center rounded-full lg:hidden ${
+              onDark ? "bg-white/15 hover:bg-white/25" : "bg-surface hover:bg-hairline"
+            }`}
           >
             <span className="flex flex-col gap-[5px]">
-              <i className="block h-px w-4 bg-white" />
-              <i className="block h-px w-4 bg-white" />
+              <i className={`block h-px w-4 ${onDark ? "bg-white" : "bg-ink"}`} />
+              <i className={`block h-px w-4 ${onDark ? "bg-white" : "bg-ink"}`} />
             </span>
           </button>
         </div>
@@ -183,14 +200,14 @@ export function SiteHeader() {
             taller than the viewport, this div scrolls internally
             instead of it being clipped outright or the page behind it
             scrolling. */}
-        {/* gap-10 on this column, rather than auto margins between the
+        {/* gap-8 on this column, rather than auto margins between the
             sections: `my-auto` on the nav looked fine while everything
             fitted, but auto margins resolve to zero the moment content
             overflows, which left the quote button touching the last nav
             row ("Contact") with no gap at all. A real gap can't collapse;
             mt-auto on the bottom block still pushes it down when there
             is spare room. */}
-        <div className="relative flex h-full min-h-0 flex-col gap-10 overflow-y-auto px-6 py-6 sm:px-10 sm:py-8">
+        <div className="relative flex h-full min-h-0 flex-col gap-8 overflow-y-auto px-6 py-5 sm:px-10 sm:py-8">
           <div className="flex items-center justify-between text-eyebrow font-medium uppercase text-white/60">
             <span>Navigation</span>
             <button type="button" onClick={closeMenu} className="flex items-center gap-2 hover:text-white">
@@ -233,7 +250,7 @@ export function SiteHeader() {
               Request a quote
             </Pill>
 
-            <div className="border-t border-white/15 pt-6">
+            <div className="border-t border-white/15 pt-5">
               <span className="eyebrow light text-eyebrow font-medium">Contact</span>
               <div className="mt-3 flex flex-col gap-1 text-body-sm text-white/80">
                 <a href={`mailto:${email}`} className="hover:text-white">
@@ -247,7 +264,7 @@ export function SiteHeader() {
 
             <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/15 pt-5 text-eyebrow normal-case tracking-normal text-white/50">
               <span>&copy; {year} CityView Printers</span>
-              <span>Nairobi, Kenya</span>
+              <span>Kisumu, Kenya</span>
             </div>
           </div>
         </div>

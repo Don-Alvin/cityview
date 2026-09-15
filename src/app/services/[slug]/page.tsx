@@ -21,8 +21,17 @@ export async function generateMetadata({
   if (!service) return {};
 
   return {
-    title: service.metaTitle,
+    // absolute: services.ts already carries a full, tuned title with the
+    // town in it, so it opts out of the layout's "%s | CityView Printers,
+    // Kisumu" template rather than ending up with the town twice.
+    title: { absolute: service.metaTitle },
     description: service.metaDescription,
+    alternates: { canonical: `/services/${service.slug}` },
+    openGraph: {
+      title: service.metaTitle,
+      description: service.metaDescription,
+      url: `/services/${service.slug}`,
+    },
   };
 }
 
@@ -43,14 +52,14 @@ export default async function ServicePage({
   if (!service) notFound();
 
   return (
-    <CardSection ground="brand-deep" id="service" labelledBy="service-title" className="px-6 py-16 sm:px-10">
+    <CardSection ground="brand-deep" id="service" labelledBy="service-title" className="px-6 py-14 sm:px-10">
       <Eyebrow light>Our services</Eyebrow>
       <h1 id="service-title" className="mt-2 text-section-title font-medium">
         {service.title}
       </h1>
       <p className="mt-4 max-w-[36rem] text-body-lg leading-[1.6] text-white/80">{service.intro}</p>
 
-      <div className="mt-14 grid gap-8 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
+      <div className="mt-12 grid gap-6 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
         <div>
           <h2 className="text-body-lg font-medium">What we produce</h2>
           <PriceFrom amount={service.priceFrom} />
@@ -67,7 +76,7 @@ export default async function ServicePage({
         </ul>
       </div>
 
-      <div className="mt-14 flex flex-wrap gap-4 border-t border-white/15 pt-10">
+      <div className="mt-12 flex flex-wrap gap-4 border-t border-white/15 pt-8">
         <Link
           href={whatsappLink(service.title)}
           className="inline-flex items-center gap-[0.55rem] rounded-pill bg-white px-7 py-[0.875rem] text-body-sm font-medium uppercase tracking-[0.07em] text-brand-deep hover:bg-brand"
@@ -78,6 +87,13 @@ export default async function ServicePage({
           Back to all services
         </Pill>
       </div>
+
+      <Link
+        href={`/quote?service=${service.slug}`}
+        className="mt-5 inline-block text-body-sm text-white/70 underline underline-offset-4 hover:text-white"
+      >
+        Prefer to fill in a form? Use our detailed quote form
+      </Link>
     </CardSection>
   );
 }

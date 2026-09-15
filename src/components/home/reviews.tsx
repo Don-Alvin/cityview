@@ -15,7 +15,7 @@ export function Reviews() {
   if (visible.length === 0) return null;
 
   return (
-    <section id="reviews" aria-labelledby="reviews-title" className="bg-white px-6 py-20 sm:px-10">
+    <section id="reviews" aria-labelledby="reviews-title" className="bg-white px-6 py-16 sm:px-10">
       <span className="eyebrow text-eyebrow font-medium">What clients value</span>
       <h2 id="reviews-title" className="mt-2 text-section-title font-medium">
         Made to be seen.
@@ -23,13 +23,13 @@ export function Reviews() {
         Made to be remembered.
       </h2>
 
-      <ul className="mt-14 grid gap-5 sm:grid-cols-3">
+      <ul className="mt-12 grid gap-5 sm:grid-cols-3">
         {visible.map((review, i) => (
           <li key={review.attribution + review.detail} className="h-full">
             <InViewBox
               as="figure"
               delay={i * 120}
-              className="flex h-full flex-col justify-between rounded-card bg-surface p-7"
+              className="flex h-full flex-col justify-between rounded-card bg-surface p-6"
             >
               <div>
                 <span className="text-[2.25rem] leading-none text-brand" aria-hidden="true">
@@ -37,7 +37,7 @@ export function Reviews() {
                 </span>
                 <blockquote className="mt-4 text-body-lg leading-[1.7]">{review.quote}</blockquote>
               </div>
-              <figcaption className="mt-6 border-t border-hairline pt-4">
+              <figcaption className="mt-5 border-t border-hairline pt-4">
                 <strong className="block font-medium">{review.attribution}</strong>
                 <span className="block text-body-sm text-ink-soft">{review.detail}</span>
               </figcaption>

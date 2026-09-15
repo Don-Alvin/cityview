@@ -10,7 +10,7 @@ import { services } from "@/content/services";
  */
 export function Services() {
   return (
-    <section id="services" aria-labelledby="services-title" className="px-6 py-16 sm:px-10">
+    <section id="services" aria-labelledby="services-title" className="px-6 py-14 sm:px-10">
       <div className="flex flex-wrap items-end justify-between gap-6">
         <span className="eyebrow text-eyebrow font-medium">Printing services</span>
       </div>
@@ -20,12 +20,12 @@ export function Services() {
         every impression
       </h2>
 
-      <ul className="mt-8 flex flex-col">
+      <ul className="mt-6 flex flex-col">
         {services.map((service, i) => (
           <li key={service.slug} className="border-t border-hairline last:border-b">
             <Link
               href={`/services/${service.slug}`}
-              className="group flex items-center gap-6 py-6 hover:text-brand"
+              className="group flex items-center gap-6 py-5 hover:text-brand"
             >
               <span className="text-eyebrow text-ink-soft">{String(i + 1).padStart(2, "0")}</span>
               <div className="flex-1">

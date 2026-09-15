@@ -234,6 +234,80 @@ html {
     to   { transform: translateY(0); opacity: 1; }
   }
 
+  /* Preloader, ported from final_design.html's .loader at Alvin's
+     request (CLAUDE.md and DESIGN.md section 6 previously forbade it;
+     both updated). The mockup drove this from JS: wait for window.load,
+     add .done, remove the node, with a 4s timeout as a panic exit. That
+     is the part not ported. Waiting on window.load means waiting on every
+     image, which on mobile data is the multi-second stall DESIGN.md
+     objected to, and it leaves the whole page behind an opaque overlay if
+     the script never runs at all.
+
+     This version is a plain keyframe with `forwards`: it always starts,
+     always finishes, needs no JS, and cannot be left hanging. visibility
+     collapses at the end so the finished overlay can't swallow clicks.
+     Timings are the mockup's own: 1.4s hold, 0.85s exit, --ease-in-out. */
+  .loader {
+    position: fixed;
+    z-index: 200;
+    inset: 0;
+    background: var(--color-brand-deep);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    animation: loader-out 0.85s var(--ease-in-out) 1.4s forwards;
+  }
+  @keyframes loader-out {
+    to {
+      transform: translateY(-105%);
+      visibility: hidden;
+    }
+  }
+
+  .loader-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    animation: loader-brand 0.7s var(--ease-out-expo) both;
+  }
+  @keyframes loader-brand {
+    from { opacity: 0; transform: translateY(1rem); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .loader-track {
+    width: 10rem;
+    height: 1px;
+    background: rgb(255 255 255 / 0.2);
+    overflow: hidden;
+  }
+  .loader-fill {
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: load-line 1.28s 0.12s var(--ease-in-out) forwards;
+  }
+  @keyframes load-line {
+    to { transform: scaleX(1); }
+  }
+
+  /* The hero's word reveals are held until the overlay has started to
+     lift, so they play to a visible page rather than behind it. Pure
+     animation-delay, not the mockup's JS `.ready` class gate: the words
+     resolve on their own timer whatever happens to the script. */
+  .loader ~ .page .clip > span {
+    animation-delay: calc(1.5s + var(--delay, 0ms));
+  }
+
   /* DESIGN.md section 5, ghost-in: oversized background lettering in the
      trust section. Scoped under .js like .inview, for the same reason:
      it starts hidden and only an observer entry (or reduced-motion)
@@ -268,5 +342,24 @@ html {
   .ghost-word > span {
     animation-duration: 0.01ms !important;
     animation-play-state: running !important;
+  }
+  /* The preloader still shows, briefly, rather than being skipped
+     outright: it is the brand intro Alvin asked for, and removing it
+     entirely here would mean two different first impressions. What goes
+     is the movement, matching the mockup's own reduced-motion handling
+     (.loader transition-duration:0s, .loader-fill animation .2s). */
+  .loader {
+    animation-delay: 0.2s;
+    animation-duration: 0.01ms;
+  }
+  .loader-brand {
+    animation-duration: 0.01ms;
+  }
+  .loader-fill {
+    animation-duration: 0.2s;
+    animation-delay: 0s;
+  }
+  .loader ~ .page .clip > span {
+    animation-delay: 0ms;
   }
 }

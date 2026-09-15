@@ -17,8 +17,27 @@ const slides = [
  * manual DOM mutation: same crossfade read, no direct element handles.
  * Pauses under reduced-motion since an auto-advancing carousel is
  * exactly the kind of movement that preference exists to stop.
+ *
+ * The card fills whatever height its flex parent gives it (Alvin: the
+ * hero cards should stretch tall, top edge reaching up toward "MAKE YOUR
+ * MARK", not sit as a short strip pinned to the floor), with the photo
+ * taking the flexible middle and the caption/dots pinned under it.
+ *
+ * Below `sm`, the card is landscape instead of tall (Alvin: image then
+ * writing, side by side, filling the gap between the title and the
+ * tagline): the content row is `flex-row` on mobile, `sm:flex-col` above
+ * that breakpoint.
+ *
+ * The row is `items-stretch`, matching final_design.html's own
+ * `.project-card{align-items:stretch}`, so the photo grows to the full
+ * height of the card's content box rather than sitting at a fixed size
+ * centred inside it. That fixed-size-plus-centring combination was what
+ * read as oversized vertical padding: the padding was already `p-1.5` on
+ * all four sides, the space above and below the image was just dead flex
+ * space. Height is owned by the caller via `className`, so the hero can
+ * trim the mobile cards without touching the desktop ones.
  */
-export function MiniSlider() {
+export function MiniSlider({ className = "" }: { className?: string }) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -30,15 +49,26 @@ export function MiniSlider() {
   const slide = slides[index];
 
   return (
-    <div className="hidden w-64 sm:block">
-      <div
-        key={index}
-        className="flex items-center gap-3 rounded-card border border-white/15 bg-white/10 p-3 transition-opacity duration-200"
-      >
-        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl">
-          <Image src={slide.image} alt={slide.alt} fill quality={80} sizes="3.5rem" className="object-cover" />
+    <div className={`flex flex-col rounded-card border border-white/15 bg-white/10 p-1.5 sm:p-4 ${className}`}>
+      <div className="flex min-h-0 flex-1 flex-row items-stretch gap-2 sm:flex-col sm:gap-3">
+        {/* Only the image remounts on slide change (key on index): the
+            dot row and text stay stable, so a keyboard focus on a dot
+            survives the auto-advance instead of being lost to a remount
+            every 3.8s. */}
+        <div
+          key={index}
+          className="relative aspect-square h-full shrink-0 overflow-hidden rounded-xl transition-opacity duration-200 sm:aspect-auto sm:h-auto sm:w-full sm:flex-1"
+        >
+          <Image
+            src={slide.image}
+            alt={slide.alt}
+            fill
+            quality={80}
+            sizes="(min-width: 640px) 14rem, 8rem"
+            className="object-cover"
+          />
         </div>
-        <div className="text-eyebrow uppercase leading-[1.5] text-white">
+        <div className="flex min-w-0 flex-1 flex-col justify-center text-eyebrow uppercase leading-[1.5] text-white sm:block sm:flex-none">
           <strong className="block font-medium tracking-[0.08em]">{slide.label}</strong>
           <span className="block text-white/80">{slide.title}</span>
           <Link href={slide.href} className="mt-1 block text-eyebrow normal-case tracking-normal underline underline-offset-2">
@@ -46,7 +76,7 @@ export function MiniSlider() {
           </Link>
         </div>
       </div>
-      <div className="mt-3 flex justify-center gap-2" role="tablist" aria-label="Featured products">
+      <div className="mt-1.5 flex justify-center gap-2 sm:mt-3" role="tablist" aria-label="Featured products">
         {slides.map((s, i) => (
           <button
             key={s.title}

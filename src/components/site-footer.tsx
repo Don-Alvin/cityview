@@ -26,8 +26,8 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="card-section mt-3 bg-brand-deep px-6 py-14 text-white sm:px-10">
-      <div className="flex flex-col gap-6 border-b border-white/15 pb-14 sm:flex-row sm:items-end sm:justify-between">
+    <footer className="card-section mt-3 bg-brand-deep px-6 py-12 text-white sm:px-10">
+      <div className="flex flex-col gap-6 border-b border-white/15 pb-12 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <span className="eyebrow light text-eyebrow font-medium">Start a project</span>
           <h2 className="mt-2 text-[3.75rem] font-medium leading-[0.92] tracking-[-0.04em]">
@@ -47,7 +47,7 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div className="grid gap-10 py-14 sm:grid-cols-[1.4fr_1fr_1fr_1fr]">
+      <div className="grid gap-8 py-12 sm:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div className="max-w-[20rem]">
           <span className="flex items-center gap-[0.55rem] text-[1.25rem] font-medium uppercase tracking-[0.2em]">
             <span aria-hidden="true" className="flex h-5 w-5 items-end gap-[0.12rem]">
@@ -61,7 +61,7 @@ export function SiteFooter() {
           <p className="mt-4 text-body-sm leading-[1.7] text-white/65">
             Printing and branding that turns ideas into tangible, memorable experiences.
           </p>
-          <address className="mt-6 not-italic text-body-sm leading-[1.7]">
+          <address className="mt-5 not-italic text-body-sm leading-[1.7]">
             <a href={contact.phoneHref} className="block text-white/80 hover:text-white">
               {contact.phoneDisplay}
             </a>
@@ -71,7 +71,7 @@ export function SiteFooter() {
             <a href={`mailto:${contact.email}`} className="block text-white/80 hover:text-white">
               {contact.email}
             </a>
-            <span className="block text-white/55">{contact.hours}</span>
+            <span className="block text-white/55">{contact.hoursDisplay}</span>
           </address>
         </div>
 

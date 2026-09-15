@@ -17,7 +17,7 @@ export function Stats() {
   return (
     <section
       aria-labelledby="stats-title"
-      className="card-section mt-3 bg-brand-deep px-6 py-20 text-white sm:px-10"
+      className="card-section mt-3 bg-brand-deep px-6 py-16 text-white sm:px-10"
     >
       <span className="eyebrow light text-eyebrow font-medium">By the capabilities</span>
       <h2 id="stats-title" className="mt-2 text-section-title font-medium text-white">
@@ -26,7 +26,7 @@ export function Stats() {
         at every scale
       </h2>
 
-      <dl className="mt-16 grid grid-cols-2 gap-x-8 gap-y-12 lg:grid-cols-4">
+      <dl className="mt-14 grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-4">
         {stats.map((stat, i) => (
           <InViewBox key={stat.label} delay={i * 110} className="border-t border-white/20 pt-5">
             <dt className="sr-only">{stat.label}</dt>
