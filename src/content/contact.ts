@@ -22,6 +22,24 @@ export const contact = {
 };
 
 /**
+ * True while any contact detail above is still a TODO_ placeholder.
+ *
+ * The build-time placeholder gate is currently off (see
+ * scripts/check-placeholders.mjs) so main can deploy for a client
+ * presentation before the meeting that resolves these. This is the
+ * backstop for the consequence that actually matters: while it is true,
+ * the site serves noindex and a disallow-all robots.txt, so a fake phone
+ * number and invented opening hours cannot be indexed, cached or shown in
+ * a search result for a real business.
+ *
+ * Derived, not a second switch to flip: it goes false on its own the
+ * moment the real values replace the placeholders.
+ */
+export const hasPlaceholderContact = Object.values(contact).some(
+  (value) => typeof value === "string" && value.startsWith("TODO_"),
+);
+
+/**
  * A search-query maps link degrades sensibly without a confirmed
  * address or pinned coordinates: it finds the business by name once
  * it's listed, and just shows the general area until then.

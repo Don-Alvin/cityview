@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Onest } from "next/font/google";
 import Script from "next/script";
 import { siteUrl } from "@/content/site";
+import { hasPlaceholderContact } from "@/content/contact";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeaderSlot } from "@/components/site-header-slot";
 import { StickyWhatsapp } from "@/components/sticky-whatsapp";
@@ -45,6 +46,12 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
   },
+  // Belt and braces with robots.ts: a robots.txt disallow asks crawlers
+  // not to fetch, a noindex tag tells them not to list what they already
+  // fetched. Both are wanted while the deployed build still shows
+  // placeholder contact details. Removed automatically once contact.ts
+  // holds real values.
+  ...(hasPlaceholderContact ? { robots: { index: false, follow: false } } : {}),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
