@@ -1,19 +1,19 @@
 import { Hero } from "@/components/home/hero";
-import { About } from "@/components/home/about";
+import { Trust } from "@/components/home/trust";
 import { Services } from "@/components/home/services";
-import { Possibilities } from "@/components/home/possibilities";
-import { Why } from "@/components/home/why";
-import { Cta } from "@/components/home/cta";
+import { Showcase } from "@/components/home/showcase";
+import { Stats } from "@/components/home/stats";
+import { Reviews } from "@/components/home/reviews";
 
 export default function Home() {
   return (
-    <main className="flex-1">
+    <>
       <Hero />
-      <About />
+      <Trust />
       <Services />
-      <Possibilities />
-      <Why />
-      <Cta />
-    </main>
+      <Showcase />
+      <Stats />
+      <Reviews />
+    </>
   );
 }

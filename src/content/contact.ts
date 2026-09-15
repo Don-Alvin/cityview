@@ -1,13 +1,49 @@
 /**
- * Placeholders throughout, matching the mockup. IMPLEMENTATION.md lists
- * real contact details as an open item; every reference to phone,
- * WhatsApp or email in the site should read from here so replacing the
- * placeholder is a one-file change, not a site-wide find and replace.
+ * CLAUDE.md: placeholders must be loud. TODO_PHONE, TODO_WHATSAPP, never
+ * a plausible-looking fake number: a realistic dummy survives a
+ * read-through and ships by accident, a loud one doesn't, and
+ * check:placeholders greps for exactly this TODO_ prefix and fails the
+ * build while any remain.
  */
 export const contact = {
-  phoneDisplay: "+254 7XX XXX XXX",
-  phoneHref: "tel:+2547XXXXXXXX",
-  whatsappHref: "https://wa.me/2547XXXXXXXX",
+  phoneDisplay: "TODO_PHONE",
+  phoneHref: "tel:TODO_PHONE",
+  whatsappNumber: "TODO_WHATSAPP",
   email: "hello@cityviewprinters.co.ke",
-  hours: "Nairobi, Kenya · Mon to Sat, 8am to 6pm",
+  hours: "Nairobi, Kenya",
+  openingHours: "Mo-Sa 08:00-18:00",
+  streetAddress: "TODO_ADDRESS",
+  addressLocality: "Nairobi",
+  addressCountry: "KE",
+  businessName: "CityView Printers",
 };
+
+/**
+ * A search-query maps link degrades sensibly without a confirmed
+ * address or pinned coordinates: it finds the business by name once
+ * it's listed, and just shows the general area until then.
+ */
+export function mapsLink() {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    `${contact.businessName}, ${contact.addressLocality}`,
+  )}`;
+}
+
+export function mapsEmbedSrc() {
+  return `https://www.google.com/maps?q=${encodeURIComponent(
+    `${contact.businessName}, ${contact.addressLocality}`,
+  )}&output=embed`;
+}
+
+/**
+ * WhatsApp stays the primary conversion path (CLAUDE.md), prefilled
+ * with a message naming the service, added throughout the site (header,
+ * footer, every service page, sticky on mobile) even though
+ * final_design.html's own mockup doesn't show WhatsApp at all.
+ */
+export function whatsappLink(serviceName?: string) {
+  const message = serviceName
+    ? `Hi CityView, I'd like a quote for ${serviceName}.`
+    : "Hi CityView, I'd like to know more about your services.";
+  return `https://wa.me/${contact.whatsappNumber}?text=${encodeURIComponent(message)}`;
+}

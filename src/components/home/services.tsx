@@ -1,54 +1,50 @@
 import Link from "next/link";
-import { Container, Section, Eyebrow } from "../layout-primitives";
-import { ServiceIcon } from "../service-icon";
 import { services } from "@/content/services";
 
 /**
- * Real <Link> elements to real routes, not the phase 0 dialog trigger.
- * IMPLEMENTATION.md: service copy is the most search-relevant content on
- * the site, so it has to be crawlable HTML on its own URL, not JS-only
- * content behind a click.
+ * IMPLEMENTATION.md: services are real pages, not a modal (and not, as
+ * final_design.html has it, an in-page anchor to the showcase section).
+ * Each row is a genuine <Link> to its own /services/[slug] page, so this
+ * is the most search-relevant content on the site being crawlable, not
+ * JS-only.
  */
 export function Services() {
   return (
-    <Section id="services" className="bg-ink text-paper">
-      <Container>
-        <div className="mb-8 flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-end">
-          <div>
-            <Eyebrow number="02">WHAT WE DO</Eyebrow>
-            <h2 className="font-display text-display-lg uppercase">Our services.</h2>
-          </div>
-          <p className="text-sm text-dim">
-            One brand. Every touchpoint.
-            <br />
-            Let&apos;s make them work together.
-          </p>
-        </div>
+    <section id="services" aria-labelledby="services-title" className="px-6 py-16 sm:px-10">
+      <div className="flex flex-wrap items-end justify-between gap-6">
+        <span className="eyebrow text-eyebrow font-medium">Printing services</span>
+      </div>
+      <h2 id="services-title" className="mt-2 text-section-title font-medium">
+        Made for
+        <br />
+        every impression
+      </h2>
 
-        <div className="grid gap-4 sm:grid-cols-3">
-          {services.map((service) => (
+      <ul className="mt-8 flex flex-col">
+        {services.map((service, i) => (
+          <li key={service.slug} className="border-t border-hairline last:border-b">
             <Link
-              key={service.slug}
               href={`/services/${service.slug}`}
-              className="rounded-card border border-line bg-panel p-[30px] text-paper transition-[transform,background-color,box-shadow] duration-200 ease-out hover:-translate-y-[5px] hover:bg-panel-hover hover:shadow-lg"
+              className="group flex items-center gap-6 py-6 hover:text-brand"
             >
-              <div className="mb-[34px] flex items-center justify-between">
-                <ServiceIcon slug={service.slug} />
-                <span className="text-xs text-dim">{service.index}</span>
+              <span className="text-eyebrow text-ink-soft">{String(i + 1).padStart(2, "0")}</span>
+              <div className="flex-1">
+                <h3 className="text-title-sm font-medium">{service.title}</h3>
+                <p className="mt-1 text-body-sm text-ink-soft">{service.teaser}</p>
               </div>
-              <h3 className="mb-[14px] text-heading font-medium">{service.title}</h3>
-              <p className="mb-3 text-body-sm text-dim">{service.teaser}</p>
-              <span className="block text-body-sm text-dim">
-                {service.tags.join(" · ")}
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-hairline">
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="h-4 w-4 fill-none stroke-current stroke-[1.8] transition-transform duration-200 ease-out group-hover:translate-x-1"
+                >
+                  <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </span>
-              <div className="mt-5 flex justify-between border-t border-line pt-[18px] text-[13px]">
-                <span>Explore {service.title.split(" ")[0].toLowerCase()}</span>
-                <b className="text-[20px] font-normal text-accent">&#8599;</b>
-              </div>
             </Link>
-          ))}
-        </div>
-      </Container>
-    </Section>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

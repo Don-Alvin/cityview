@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Container, Section, Eyebrow } from "@/components/layout-primitives";
+import Link from "next/link";
+import { CardSection, Eyebrow } from "@/components/layout-primitives";
+import { Pill } from "@/components/pill";
 import { PriceFrom } from "@/components/price-from";
-import { Cta } from "@/components/home/cta";
 import { getService, services } from "@/content/services";
+import { whatsappLink } from "@/content/contact";
 
 export function generateStaticParams() {
   return services.map((service) => ({ slug: service.slug }));
@@ -24,6 +26,13 @@ export async function generateMetadata({
   };
 }
 
+/**
+ * IMPLEMENTATION.md: services are real, indexable pages, not a modal
+ * (final_design.html's own service rows link out to nowhere, they're
+ * just home-page copy, so this whole page is new rather than ported).
+ * The product list is the most search-relevant content on the site, so
+ * it's plain markup here, not something that only exists after a click.
+ */
 export default async function ServicePage({
   params,
 }: {
@@ -34,39 +43,41 @@ export default async function ServicePage({
   if (!service) notFound();
 
   return (
-    <main className="flex-1 bg-ink text-paper">
-      <Section id="top" className="pb-14 lg:pb-24">
-        <Container>
-          <Eyebrow number={service.index}>OUR SERVICES</Eyebrow>
-          <h1 className="font-display text-display-lg uppercase">{service.title}</h1>
-          <p className="mt-4 max-w-[520px] text-[15px] leading-[1.8] text-dim">
-            {service.intro}
-          </p>
-        </Container>
-      </Section>
+    <CardSection ground="brand-deep" id="service" labelledBy="service-title" className="px-6 py-16 sm:px-10">
+      <Eyebrow light>Our services</Eyebrow>
+      <h1 id="service-title" className="mt-2 text-section-title font-medium">
+        {service.title}
+      </h1>
+      <p className="mt-4 max-w-[36rem] text-body-lg leading-[1.6] text-white/80">{service.intro}</p>
 
-      <Section className="pb-14 lg:pb-24">
-        <Container>
-          <div className="grid gap-8 lg:grid-cols-[38%_62%]">
-            <div>
-              <h2 className="text-heading font-medium">What we produce</h2>
-              <PriceFrom amount={service.priceFrom} />
-            </div>
-            <ul>
-              {service.products.map((product) => (
-                <li
-                  key={product}
-                  className="border-b border-line py-[14px] text-[15px] text-dim first:border-t"
-                >
-                  {product}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Container>
-      </Section>
+      <div className="mt-14 grid gap-8 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
+        <div>
+          <h2 className="text-body-lg font-medium">What we produce</h2>
+          <PriceFrom amount={service.priceFrom} />
+        </div>
+        <ul>
+          {service.products.map((product) => (
+            <li
+              key={product}
+              className="border-t border-white/15 py-4 text-body leading-[1.6] text-white/85 first:border-t-0 sm:first:border-t"
+            >
+              {product}
+            </li>
+          ))}
+        </ul>
+      </div>
 
-      <Cta />
-    </main>
+      <div className="mt-14 flex flex-wrap gap-4 border-t border-white/15 pt-10">
+        <Link
+          href={whatsappLink(service.title)}
+          className="inline-flex items-center gap-[0.55rem] rounded-pill bg-white px-7 py-[0.875rem] text-body-sm font-medium uppercase tracking-[0.07em] text-brand-deep hover:bg-brand"
+        >
+          Message us on WhatsApp
+        </Link>
+        <Pill href="/#services" variant="outline-light">
+          Back to all services
+        </Pill>
+      </div>
+    </CardSection>
   );
 }

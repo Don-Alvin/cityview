@@ -1,43 +1,39 @@
 import type { ReactNode } from "react";
 
-/**
- * Fixed-width gutters at every breakpoint (calc(100% - Npx) rather than a
- * percentage gutter), capped by the 1240px content column. Matches
- * DESIGN.md section 3 and the mockup's `.wrap`.
- */
-export function Container({
-  children,
-  className = "",
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`mx-auto w-[calc(100%-36px)] max-w-[760px] sm:w-[calc(100%-56px)] sm:max-w-[1050px] lg:w-[calc(100%-96px)] lg:max-w-[1240px] ${className}`}
-    >
-      {children}
-    </div>
-  );
-}
+const grounds = {
+  background: "bg-background text-ink",
+  surface: "bg-surface text-ink",
+  "brand-deep": "bg-brand-deep text-white",
+};
 
 /**
- * Section top-rhythm only. Left-hand padding, colour and inner layout
- * belong to whatever the section actually contains.
+ * DESIGN.md section 3: the page is a stack of rounded cards, not
+ * full-bleed sections, alternating between three grounds. `ground` picks
+ * which one, so that alternation is enforced by the type system rather
+ * than by remembering to type the right class each time.
+ *
+ * `aria-labelledby` is required, not optional: DESIGN.md section 7 lists
+ * it as an accessibility floor the mockup already meets, so every section
+ * needs a heading id to point at.
  */
-export function Section({
+export function CardSection({
   children,
-  className = "",
+  ground,
   id,
+  labelledBy,
+  className = "",
 }: {
   children: ReactNode;
-  className?: string;
+  ground: keyof typeof grounds;
   id?: string;
+  labelledBy: string;
+  className?: string;
 }) {
   return (
     <section
       id={id}
-      className={`pt-section-sm lg:pt-section ${className}`}
+      aria-labelledby={labelledBy}
+      className={`card-section ${grounds[ground]} ${className}`}
     >
       {children}
     </section>
@@ -45,21 +41,20 @@ export function Section({
 }
 
 /**
- * The numbered eyebrow label, e.g. "02 / WHAT WE DO". Number and label are
- * separate props so the running sequence down the page can't drift out of
- * sync with hand-typed text.
+ * Uppercase label with a brand-coloured dot (CSS ::before in
+ * globals.css). `light` switches to the pale-on-dark variant for
+ * sections on the brand-deep ground.
  */
 export function Eyebrow({
-  number,
   children,
+  light = false,
 }: {
-  number?: string;
   children: ReactNode;
+  light?: boolean;
 }) {
   return (
-    <p className="mb-[26px] text-eyebrow font-medium text-accent">
-      {number ? `${number} / ` : null}
+    <span className={`eyebrow text-eyebrow font-medium ${light ? "light" : ""}`}>
       {children}
-    </p>
+    </span>
   );
 }
