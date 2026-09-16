@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Pill } from "./pill";
 import { contact, whatsappLink } from "@/content/contact";
@@ -16,6 +16,14 @@ const navLinks = [
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
+
+// The overlay menu gets a Home link the desktop bar doesn't need. The bar
+// has the logo, which is already a link home and is the convention people
+// expect. The overlay is a full-screen dialog: while it is open it covers
+// that logo, so without this the only route home is to close the menu
+// first and then find it. Derived from navLinks rather than a second
+// array, so the two still can't drift apart.
+const overlayLinks = [{ href: "/", label: "Home" }, ...navLinks];
 
 function openQuoteModal() {
   (document.getElementById("quote-modal") as HTMLDialogElement | null)?.showModal();
@@ -61,6 +69,21 @@ export function SiteHeader({ tone = "light" }: { tone?: "light" | "ink" }) {
   const { email } = contact;
 
   const scrollYRef = useRef(0);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    // IntersectionObserver, not a scroll listener. DESIGN.md section 6
+    // bans layout reads inside scroll handlers and names this as the
+    // replacement: the sentinel is a zero-height marker sitting in normal
+    // flow at the very top of the page, so the moment it leaves the
+    // viewport the header is stuck and needs its own background.
+    const observer = new IntersectionObserver(([entry]) => setScrolled(!entry.isIntersecting));
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, []);
 
   function openMenu() {
     // Native <dialog> + showModal() is supposed to lock background
@@ -92,17 +115,26 @@ export function SiteHeader({ tone = "light" }: { tone?: "light" | "ink" }) {
     window.scrollTo(0, scrollYRef.current);
   }
 
-  // On the home page this header sits inside the hero, over the photo, so
-  // it renders in white. Everywhere else it sits on the light page ground
-  // and has to invert, or it would be white text on white. Only the bar
-  // itself changes: the overlay menu is its own brand-deep surface either
-  // way.
-  const onDark = tone === "light";
+  // At rest on the home page this sits over the hero photograph, so it
+  // renders in white; on every other page it sits on the light page
+  // ground and has to invert, or it would be white text on white. Once
+  // stuck it carries its own brand-deep ground and goes white regardless
+  // of what is scrolling underneath. Only the bar changes: the overlay
+  // menu is its own brand-deep surface in all cases.
+  const onDark = tone === "light" || scrolled;
 
   return (
     <>
+      {/* Zero-height marker in normal flow, read by the observer above to
+          tell "at the top of the page" from "scrolled". It has to sit
+          outside the sticky element, which stops moving relative to the
+          viewport and so can never report this itself. */}
+      <div ref={sentinelRef} aria-hidden="true" />
+
       <header
-        className={`flex items-center gap-4 px-6 pt-5 sm:px-10 sm:pt-8 ${onDark ? "text-white" : "text-ink"}`}
+        className={`sticky top-0 z-50 flex h-[var(--header-h)] items-center gap-4 px-6 transition-colors duration-200 sm:px-10 ${
+          scrolled ? "bg-brand-deep text-white" : onDark ? "text-white" : "text-ink"
+        }`}
       >
         <nav aria-label="Primary" className="hidden flex-1 gap-6 text-eyebrow lg:flex">
           {navLinks.map((link) => (
@@ -219,7 +251,7 @@ export function SiteHeader({ tone = "light" }: { tone?: "light" | "ink" }) {
           </div>
 
           <nav aria-label="Menu links" className="flex flex-col">
-            {navLinks.map((link) => (
+            {overlayLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
