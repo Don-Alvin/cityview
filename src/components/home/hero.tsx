@@ -1,6 +1,5 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { SiteHeader } from "../site-header";
 import { MiniSlider } from "./mini-slider";
 
 function delayStyle(ms: number): CSSProperties {
@@ -31,7 +30,15 @@ export function Hero() {
     <section
       id="home"
       aria-labelledby="hero-title"
-      className="card-section relative isolate min-h-[36rem] overflow-hidden bg-brand-deep text-white"
+      // -mt-[var(--header-h)] slides the hero up behind the sticky header
+      // that now lives in the layout. The header used to be a child of
+      // this section, which looked identical but could never be sticky:
+      // this section is overflow-hidden (it has to be, to clip the photo
+      // to the card radius), and position:sticky cannot escape a clipping
+      // ancestor, so it would have unstuck itself the moment the hero
+      // scrolled away. The inner column pays the height back as padding,
+      // so the h1 lands exactly where it always did.
+      className="card-section relative isolate -mt-[var(--header-h)] min-h-[36rem] overflow-hidden bg-brand-deep text-white"
       style={{ height: "calc(100svh - 1rem)" }}
     >
       <div className="absolute inset-0 -z-20">
@@ -54,9 +61,7 @@ export function Hero() {
         }}
       />
 
-      <div className="flex h-full flex-col">
-        <SiteHeader />
-
+      <div className="flex h-full flex-col pt-[var(--header-h)]">
         {/* The visible h1 is the design's three words, which say nothing
             about what the business does or where it is. The sr-only half
             completes the sentence for screen readers and crawlers without

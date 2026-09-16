@@ -6,6 +6,92 @@ deviations from the mockup, each with what changed and why.
 
 ---
 
+## Revision: sticky header, and a Home link in the overlay only
+
+**Home link, asked as a question, answered two different ways.** The
+desktop bar does not get one: the logo is already a link home with
+`aria-label="CityView Printers home"`, that is the convention people
+expect, and a Home item would spend a nav slot restating it. The overlay
+menu does, because it is a full-screen `<dialog>`: while it is open it
+covers the very logo that would otherwise be the way home, so the menu
+list is the only navigation surface available at that moment and Home
+was missing from it. Added as `overlayLinks`, derived from `navLinks`
+rather than a second array, so the shared-list property that stops the
+two drifting still holds.
+
+**Sticky header, and the structural reason the diff is larger than
+expected.** The header could not be made sticky where it was. It lived
+inside `<Hero />`, and that section is `overflow-hidden` (it has to be,
+to clip the background photograph to the card radius). `position: sticky`
+cannot escape a clipping ancestor: it would have stuck within the hero
+and then unstuck the moment the hero scrolled away, which is worse than
+not sticky at all. So the header moved out into the layout, rendered once
+for every route by `SiteHeaderSlot`.
+
+To keep the home page looking as approved, with the photograph running up
+behind the bar, the hero now carries `-mt-[var(--header-h)]` and pays the
+height back as padding on its inner column, so the h1 lands exactly where
+it did. `--header-h` is declared once in globals.css because two places
+depend on it agreeing; two hardcoded numbers would drift the first time
+the bar changed.
+
+**Stuck state.** A zero-height sentinel in normal flow, watched by an
+`IntersectionObserver`, tells "at the top" from "scrolled". Not a scroll
+listener: DESIGN.md section 6 bans layout reads inside those and names
+this as the replacement. Once stuck the bar paints a solid `brand-deep`
+ground and goes white over whatever is scrolling beneath it. Solid, not
+`backdrop-filter`, because section 6 bans blur on anything fixed or
+sticky: it forces a re-composite of everything behind it on every scroll
+frame, which is the mid-range Android case that rule exists for.
+
+**Checked, because this was the risk:** one header, one Home link, one
+`aria-label="Primary"` nav and one `id="mobile-menu"` dialog per page.
+A second header instance would have meant duplicate landmarks and two
+dialogs fighting over the same id.
+
+**File:** `src/components/site-header.tsx`,
+`src/components/site-header-slot.tsx`, `src/components/home/hero.tsx`,
+`src/app/globals.css`
+
+## Deploy: placeholder gate switched off, noindex put in its place
+
+**What:** Vercel could not build `main`. Not a bug: `npm run build` runs
+`prebuild` first, which runs `check:placeholders`, which exited 1 because
+8 `TODO_` placeholders remain (5 contact facts, 3 timeline years). The
+gate did exactly what IMPLEMENTATION.md asked of it. Alvin needs main
+deployed for a client presentation before the meeting that resolves those
+placeholders, and chose to switch the gate off rather than present from a
+preview URL.
+
+**Done:** `FAIL_ON_PLACEHOLDERS` in `scripts/check-placeholders.mjs` set
+to false. It still finds and lists every placeholder in the build log,
+now under a banner saying the gate is off and naming the constant to flip
+back. `npm run build` exits 0; verified by running the real command
+rather than the `npx next build` bypass.
+
+**The safeguard that replaces it.** Switching off a rule about not
+shipping fake contact details, without replacing it, would leave the real
+consequence unguarded: a live page carrying a fake phone number and
+invented opening hours in `LocalBusiness` JSON-LD, indexed by Google for
+a real business. That is the one part of this that is genuinely hard to
+undo. So `contact.ts` now derives `hasPlaceholderContact`, and while it
+is true the site serves `noindex, nofollow` and a disallow-all
+robots.txt. Both verified in the built output.
+
+It is derived, not a second switch. Nobody has to remember to turn
+indexing back on: it happens the moment real values replace the
+placeholders. The only thing left to remember is
+`FAIL_ON_PLACEHOLDERS`, which is now a CHECKLIST.md line.
+
+**Still true and worth saying plainly:** anyone who opens the deployed
+URL will see `TODO_PHONE`, `TODO_WHATSAPP`, `TODO_ADDRESS` and
+`TODO_HOURS` on the page. That is the trade that was chosen, and the
+loud-placeholder convention is what makes it obvious rather than
+plausible.
+
+**File:** `scripts/check-placeholders.mjs`, `src/content/contact.ts`,
+`src/app/robots.ts`, `src/app/layout.tsx`
+
 ## Correction: the business is in Kisumu, not Nairobi
 
 **What:** Alvin: "CityView is based in Kisumu." The entire site had been

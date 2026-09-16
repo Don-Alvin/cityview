@@ -90,6 +90,21 @@ html {
     background: var(--color-background);
     color: var(--color-ink);
   }
+
+  /* Height of the sticky site header. Declared once because two places
+     depend on it and they must agree exactly: the header sets its own
+     height from this, and the hero cancels it with a matching negative
+     margin so the photograph still runs up behind the bar the way the
+     mockup has it. Two hardcoded numbers would drift the first time the
+     bar changed. */
+  :root {
+    --header-h: 4.5rem;
+  }
+  @media (min-width: 640px) {
+    :root {
+      --header-h: 5rem;
+    }
+  }
 }
 
 @layer utilities {

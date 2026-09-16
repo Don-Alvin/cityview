@@ -4,20 +4,21 @@ import { usePathname } from "next/navigation";
 import { SiteHeader } from "./site-header";
 
 /**
- * Every page needs the nav, not just the home page: Alvin found there was
- * no way back to home from /about, /contact and the rest, because the
- * header only existed inside the hero.
+ * The header renders once, here in the layout, for every route. It used
+ * to live inside <Hero />, which meant the home page had it and nothing
+ * else did: /about, /contact, /work, /quote and all four service pages
+ * had no nav, no logo and no way back to home, which is exactly where
+ * WhatsApp deep links land.
  *
- * It can't simply move to the layout, though. On home the header is part
- * of the hero: it sits inside the hero card, over the photograph, in
- * white. Rendering it in the layout instead would lift it out of the
- * photo and onto the white page gutter above the card, which is a visible
- * change to the approved design. So home keeps rendering its own (inside
- * <Hero />) and this slot fills in everywhere else, in the ink tone that
- * a light page ground needs.
+ * It also has to be here to be sticky at all. Inside the hero it sat in a
+ * section that is overflow-hidden (needed, to clip the photograph to the
+ * card radius) and position:sticky cannot escape a clipping ancestor.
+ *
+ * All that differs per route is the resting tone: white over the hero
+ * photograph on home, ink on the light page ground everywhere else. Once
+ * scrolled the header paints its own brand-deep ground either way.
  */
 export function SiteHeaderSlot() {
   const pathname = usePathname();
-  if (pathname === "/") return null;
-  return <SiteHeader tone="ink" />;
+  return <SiteHeader tone={pathname === "/" ? "light" : "ink"} />;
 }
