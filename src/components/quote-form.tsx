@@ -1,31 +1,11 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Pill } from "./pill";
-import { whatsappLink } from "@/content/contact";
-import Link from "next/link";
-
-type Status = "idle" | "submitting" | "success" | "error";
+import { whatsappMessageLink } from "@/content/contact";
+import styles from "./site.module.css";
 
 type ServiceOption = { slug: string; title: string };
 
-const fieldClasses =
-  "w-full rounded-xl border bg-white px-4 py-3 text-body-sm focus:outline-none focus:ring-3 focus:ring-brand/20 focus:border-brand disabled:cursor-not-allowed disabled:opacity-50";
-
-// DESIGN.md defines no error/danger colour token (same gap noted for
-// quote-modal.tsx, see report.md): a heavier border plus explicit copy
-// stands in for colour, which is also the more accessible choice.
-function borderFor(hasError: boolean) {
-  return hasError ? "border-2 border-ink" : "border-hairline";
-}
-
-/**
- * The structured alternative to WhatsApp (IMPLEMENTATION.md build order
- * step 4): unlike the quick name/email/project modal reachable from every
- * "Request a quote" pill, this is the full job brief the client actually
- * needs to price a print run, matching src/app/api/quote/route.ts's
- * fields exactly (service, size, quantity, finish, deadline, name, phone).
- */
 export function QuoteForm({
   services,
   initialService,
@@ -33,12 +13,9 @@ export function QuoteForm({
   services: ServiceOption[];
   initialService?: string;
 }) {
-  const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<{ service?: string; name?: string; phone?: string }>({});
-  const [serverError, setServerError] = useState<string | null>(null);
-  const [firstName, setFirstName] = useState("there");
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const service = String(form.get("service") ?? "").trim();
@@ -56,60 +33,32 @@ export function QuoteForm({
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
-    setFirstName(name.split(/\s+/)[0] || "there");
-    setStatus("submitting");
-    setServerError(null);
-
-    try {
-      const res = await fetch("/api/quote", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ service, size, quantity, finish, deadline, name, phone }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        throw new Error(data?.error ?? "Something went wrong sending your request.");
-      }
-      setStatus("success");
-    } catch (err) {
-      setStatus("error");
-      setServerError(err instanceof Error ? err.message : "Something went wrong.");
-    }
-  }
-
-  const submitting = status === "submitting";
-
-  if (status === "success") {
-    return (
-      <div className="mt-8 max-w-[28rem] rounded-card bg-surface p-7 text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand">
-          <svg viewBox="0 0 24 24" width="24" fill="none" stroke="white" strokeWidth="2" aria-hidden="true">
-            <path d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
-        <h2 className="mt-4 text-body-lg font-medium">Request received</h2>
-        <p className="mt-2 text-body-sm text-ink-soft">
-          Thanks, {firstName}, our team will be in touch to price your job.
-        </p>
-        <Pill href="/" className="mt-5">
-          Back to home
-        </Pill>
-      </div>
-    );
+    const details = [
+      `Service: ${service}`,
+      size && `Size: ${size}`,
+      quantity && `Quantity: ${quantity}`,
+      finish && `Finish: ${finish}`,
+      deadline && `Needed by: ${deadline}`,
+      `Name: ${name}`,
+      `Phone: ${phone}`,
+    ].filter(Boolean).join("\n");
+    window.location.assign(whatsappMessageLink(`Hi CityView, I'd like a quote.\n\n${details}`));
   }
 
   return (
-    <form noValidate onSubmit={handleSubmit} className="mt-8 flex max-w-[34rem] flex-col gap-5">
+    <form noValidate onSubmit={handleSubmit} className={styles.formStack}>
       <div>
-        <label htmlFor="quote-service" className="mb-1.5 block text-eyebrow font-medium text-ink-soft">
+        <label htmlFor="quote-service" className="field-label">
           Service
         </label>
         <select
           id="quote-service"
           name="service"
           defaultValue={initialService ?? ""}
-          disabled={submitting}
-          className={`${fieldClasses} ${borderFor(Boolean(errors.service))}`}
+          required
+          aria-invalid={Boolean(errors.service)}
+          aria-describedby={errors.service ? "quote-service-error" : undefined}
+          className="form-field"
         >
           <option value="" disabled>
             Select a service
@@ -121,12 +70,12 @@ export function QuoteForm({
           ))}
           <option value="Something else">Something else</option>
         </select>
-        {errors.service ? <p className="mt-1.5 text-body-sm text-ink">{errors.service}</p> : null}
+        {errors.service && <p id="quote-service-error" className="field-error">{errors.service}</p>}
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className={styles.formGroup}>
         <div>
-          <label htmlFor="quote-size" className="mb-1.5 block text-eyebrow font-medium text-ink-soft">
+          <label htmlFor="quote-size" className="field-label">
             Size
           </label>
           <input
@@ -134,13 +83,12 @@ export function QuoteForm({
             name="size"
             type="text"
             placeholder="e.g. A5, A2, 60x90cm"
-            disabled={submitting}
-            className={`${fieldClasses} border-hairline`}
+            className="form-field"
           />
         </div>
 
         <div>
-          <label htmlFor="quote-quantity" className="mb-1.5 block text-eyebrow font-medium text-ink-soft">
+          <label htmlFor="quote-quantity" className="field-label">
             Quantity
           </label>
           <input
@@ -148,13 +96,12 @@ export function QuoteForm({
             name="quantity"
             type="text"
             placeholder="e.g. 500"
-            disabled={submitting}
-            className={`${fieldClasses} border-hairline`}
+            className="form-field"
           />
         </div>
 
         <div>
-          <label htmlFor="quote-finish" className="mb-1.5 block text-eyebrow font-medium text-ink-soft">
+          <label htmlFor="quote-finish" className="field-label">
             Finish
           </label>
           <input
@@ -162,28 +109,26 @@ export function QuoteForm({
             name="finish"
             type="text"
             placeholder="e.g. matte, gloss, spot UV"
-            disabled={submitting}
-            className={`${fieldClasses} border-hairline`}
+            className="form-field"
           />
         </div>
 
         <div>
-          <label htmlFor="quote-deadline" className="mb-1.5 block text-eyebrow font-medium text-ink-soft">
-            Needed by
+          <label htmlFor="quote-deadline" className="field-label">
+            When do you need it?
           </label>
           <input
             id="quote-deadline"
             name="deadline"
             type="text"
-            placeholder="e.g. 2 weeks, or a date"
-            disabled={submitting}
-            className={`${fieldClasses} border-hairline`}
+            placeholder="Enter a date or timeframe"
+            className="form-field"
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="quote-name" className="mb-1.5 block text-eyebrow font-medium text-ink-soft">
+        <label htmlFor="quote-name" className="field-label">
           Full name
         </label>
         <input
@@ -191,14 +136,17 @@ export function QuoteForm({
           name="name"
           type="text"
           placeholder="Alex Mwangi"
-          disabled={submitting}
-          className={`${fieldClasses} ${borderFor(Boolean(errors.name))}`}
+          required
+          autoComplete="name"
+          aria-invalid={Boolean(errors.name)}
+          aria-describedby={errors.name ? "quote-name-error" : undefined}
+          className="form-field"
         />
-        {errors.name ? <p className="mt-1.5 text-body-sm text-ink">{errors.name}</p> : null}
+        {errors.name && <p id="quote-name-error" className="field-error">{errors.name}</p>}
       </div>
 
       <div>
-        <label htmlFor="quote-phone" className="mb-1.5 block text-eyebrow font-medium text-ink-soft">
+        <label htmlFor="quote-phone" className="field-label">
           Phone number
         </label>
         <input
@@ -206,22 +154,16 @@ export function QuoteForm({
           name="phone"
           type="tel"
           placeholder="07XX XXX XXX"
-          disabled={submitting}
-          className={`${fieldClasses} ${borderFor(Boolean(errors.phone))}`}
+          required
+          autoComplete="tel"
+          aria-invalid={Boolean(errors.phone)}
+          aria-describedby={errors.phone ? "quote-phone-error" : undefined}
+          className="form-field"
         />
-        {errors.phone ? <p className="mt-1.5 text-body-sm text-ink">{errors.phone}</p> : null}
+        {errors.phone && <p id="quote-phone-error" className="field-error">{errors.phone}</p>}
       </div>
 
-      {status === "error" ? <p className="text-body-sm text-ink">{serverError}</p> : null}
-
-      <div className="flex flex-wrap items-center gap-4">
-        <Pill type="submit" disabled={submitting}>
-          {submitting ? "Sending" : "Request a quote"}
-        </Pill>
-        <Link href={whatsappLink()} className="text-body-sm text-ink-soft underline underline-offset-4 hover:text-ink">
-          Prefer to chat? Message us on WhatsApp
-        </Link>
-      </div>
+      <button type="submit" className="site-action">Continue on WhatsApp</button>
     </form>
   );
 }

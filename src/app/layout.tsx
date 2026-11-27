@@ -1,20 +1,24 @@
 import type { Metadata } from "next";
-import { Onest } from "next/font/google";
+import localFont from "next/font/local";
 import Script from "next/script";
-import { siteUrl } from "@/content/site";
+import { siteUrl, themeKey } from "@/content/site";
 import { hasPlaceholderContact } from "@/content/contact";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeaderSlot } from "@/components/site-header-slot";
-import { StickyWhatsapp } from "@/components/sticky-whatsapp";
 import { QuoteModal } from "@/components/quote-modal";
 import "./globals.css";
 
-const onest = Onest({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-onest",
+const outfit = localFont({
+  src: "./fonts/outfit-latin-variable.woff2",
+  weight: "100 900",
+  variable: "--font-outfit",
   display: "swap",
 });
+
+const themeScript = `try {
+  const theme = localStorage.getItem(${JSON.stringify(themeKey)});
+  if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+} catch {}`;
 
 /**
  * `template` appends the business and town to every page title that sets
@@ -48,66 +52,19 @@ export const metadata: Metadata = {
   },
   // Belt and braces with robots.ts: a robots.txt disallow asks crawlers
   // not to fetch, a noindex tag tells them not to list what they already
-  // fetched. Both are wanted while the deployed build still shows
-  // placeholder contact details. Removed automatically once contact.ts
-  // holds real values.
+  // fetched. Both apply until the contact details in contact.ts are set.
   ...(hasPlaceholderContact ? { robots: { index: false, follow: false } } : {}),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en-KE"
-      className={`${onest.variable} h-full antialiased`}
-      // The beforeInteractive script below adds .js to this element
-      // before React hydrates, which is a deliberate, expected mismatch
-      // between the server-rendered class and what's in the DOM by the
-      // time hydration runs, not a bug for React to warn about or "fix"
-      // by reverting it.
-      suppressHydrationWarning
-    >
-      <body className="min-h-full bg-background text-ink font-sans">
-        {/* beforeInteractive: must run before .inview elements paint, so
-            the CSS in globals.css can gate opacity:0 behind .js actually
-            being present. If this never runs (JS blocked or fails),
-            <html> stays without .js and every .inview element renders
-            at its default, fully visible state instead of staying
-            hidden forever. */}
-        <Script id="mark-js" strategy="beforeInteractive">
-          {`document.documentElement.classList.add('js');`}
-        </Script>
-
-        {/* Preloader, ported from final_design.html at Alvin's explicit
-            request, reversing the "do not build it" rule that CLAUDE.md
-            and DESIGN.md section 6 both carried (both updated to match).
-            Unlike the mockup's version this runs on pure CSS with no JS
-            and no `window.load` wait: the mockup gated the reveal on every
-            image finishing, with a 4s panic timeout behind it, which on
-            mobile data is exactly the stall DESIGN.md warned about. A
-            keyframe with `forwards` cannot fail to finish, so the page
-            can never be left behind a stuck overlay. aria-hidden, because
-            it is decoration. */}
-        <div className="loader" aria-hidden="true">
-          <div className="loader-brand">
-            <span aria-hidden="true" className="flex h-5 w-5 items-end gap-[0.12rem]">
-              <i className="block h-[0.5rem] w-[0.22rem] bg-current" />
-              <i className="block h-[0.85rem] w-[0.22rem] bg-current" />
-              <i className="block h-[1.18rem] w-[0.22rem] bg-current" />
-              <i className="block h-[0.7rem] w-[0.22rem] bg-current" />
-            </span>
-            CityView
-          </div>
-          <div className="loader-track">
-            <div className="loader-fill" />
-          </div>
-        </div>
-
-        <main className="page">
-          <SiteHeaderSlot />
-          {children}
-          <SiteFooter />
-        </main>
-        <StickyWhatsapp />
+    <html lang="en-KE" className={`${outfit.variable} antialiased`} suppressHydrationWarning>
+      <body>
+        <Script id="cityview-theme" strategy="beforeInteractive">{themeScript}</Script>
+        <a href="#main-content" className="skip-link">Skip to content</a>
+        <SiteHeaderSlot />
+        <main id="main-content" tabIndex={-1}>{children}</main>
+        <SiteFooter />
         <QuoteModal />
       </body>
     </html>

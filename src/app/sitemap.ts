@@ -1,12 +1,12 @@
 import type { MetadataRoute } from "next";
-import { siteUrl } from "@/content/site";
+import { mainNavigation, siteUrl } from "@/content/site";
 import { services } from "@/content/services";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes = ["", "/about", "/contact", "/quote", "/work"].map((path) => ({
-    url: `${siteUrl}${path}`,
+  const staticRoutes = [...mainNavigation.map(({ href }) => href), "/quote"].map((path) => ({
+    url: path === "/" ? siteUrl : `${siteUrl}${path}`,
     changeFrequency: "monthly" as const,
-    priority: path === "" ? 1 : 0.7,
+    priority: path === "/" ? 1 : 0.7,
   }));
 
   const serviceRoutes = services.map((service) => ({

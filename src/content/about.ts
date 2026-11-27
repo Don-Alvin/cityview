@@ -1,43 +1,54 @@
-export type Milestone = {
-  /** Displayed as-is. Loud TODO_ placeholder until the client confirms. */
-  year: string;
-  title: string;
-  detail: string;
-};
+export const foundedYear = "2018";
 
-/**
- * The /about timeline: humble beginnings to a full production floor, the
- * arc Alvin described. The shape of the story is client-given; the years
- * are not, so each one is a loud TODO_ placeholder that `npm run
- * check:placeholders` will block the build on until real dates land
- * (CLAUDE.md: never a plausible-looking fake). The wording of the middle
- * two steps is written for this pass and needs the same confirmation as
- * services.ts's product lists: it should read as the real history, not a
- * plausible-sounding invention, before this ships.
- */
-export const milestones: Milestone[] = [
+export const story = [
+  `CityView Printers opened in Maseno in ${foundedYear}. We printed and bound assignments for students, made Sunday programmes for churches and printed posters for local shops.`,
+  "Our shop was one room with a printer, a paper cutter and a stack of A4 paper. The founder and one employee ran it. We had no sign outside, so customers found us by word of mouth.",
+  "We started out printing reports, posters and notices. When a file arrived with crooked margins or a blurry logo, we fixed it before printing. It was a small step that made a difference to the finished work.",
+  "Shopkeepers who first came for posters returned for flyers and business cards. As they asked for more ways to present their businesses, we added signage, merchandise and branded materials.",
+  "Event organisers began asking us to carry the same design across stage backdrops, tents and T-shirts. As projects grew, we moved from Maseno to a larger studio in Kisumu.",
+  "Today we have more than 20 designers, printers, installers and project managers. We plan, produce and install branding for businesses, events and campaigns across western Kenya. Our work has included projects for Safaricom, NTSA and Bolt.",
+  "We still work with the kinds of customers who helped us get started. A student printing a final-year project and a shopkeeper ordering a first signboard get the same attention as a team planning a large campaign.",
+];
+
+export const milestones = [
   {
-    year: "TODO_YEAR_FOUNDED",
-    title: "One shop, one machine",
+    title: `One room in Maseno in ${foundedYear}`,
     detail:
-      "CityView opens in Kisumu doing the jobs nobody else wanted at short notice: business cards overnight, a hundred flyers by lunchtime.",
+      "CityView Printers opens with a founder, one employee, one printer and a paper cutter. A4 prints, posters and general printing for students, churches and small shops.",
   },
   {
-    year: "TODO_YEAR_REPEAT",
-    title: "Word travels down the street",
+    title: "Customers spread the word",
     detail:
-      "Print for neighbouring shops turns into repeat work, and repeat work turns into the first proper client list.",
+      "Customers return for print jobs and tell others about the shop. The team checks and adjusts files before printing.",
   },
   {
-    year: "TODO_YEAR_LARGE_FORMAT",
-    title: "Large format arrives",
+    title: "From printing to branding",
     detail:
-      "Banners, shopfront signage and vehicle graphics join the list, and the work moves from paper to the side of a building.",
+      "Small business owners ask for help with branding. CityView adds logos, stationery and branded materials.",
   },
   {
-    year: "Today",
-    title: "A full production floor",
+    title: "Signage and merchandise",
     detail:
-      "State-of-the-art printing and branding equipment under one roof, from a single business card to a complete brand rollout.",
+      "CityView adds shop signs, branded clothing and promotional items as the team grows.",
+  },
+  {
+    title: "The move to Kisumu",
+    detail:
+      "CityView relocates from Maseno to Kisumu, gaining the space and team to take on bigger projects.",
+  },
+  {
+    title: "Event branding",
+    detail:
+      "CityView produces matching branding for event stages, tents and uniforms.",
+  },
+  {
+    title: "Corporate and government campaigns",
+    detail:
+      "CityView works on campaigns for organisations including Safaricom, NTSA and Bolt.",
+  },
+  {
+    title: "More than 20 people in Kisumu",
+    detail:
+      "The team produces print, signage and merchandise for local shops, organisations and events across western Kenya.",
   },
 ];

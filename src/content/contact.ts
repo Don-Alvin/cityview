@@ -1,15 +1,17 @@
 /**
- * CLAUDE.md: placeholders must be loud. TODO_PHONE, TODO_WHATSAPP, never
+ * CLAUDE.md: placeholders must be loud. Use TODO_PHONE, never
  * a plausible-looking fake number: a realistic dummy survives a
  * read-through and ships by accident, a loud one doesn't, and
  * check:placeholders greps for exactly this TODO_ prefix and fails the
  * build while any remain.
  */
+const phoneDisplay = "+254 725 913 100";
+const phoneNumber = phoneDisplay.replaceAll(" ", "");
+
 export const contact = {
-  phoneDisplay: "TODO_PHONE",
-  phoneHref: "tel:TODO_PHONE",
-  whatsappNumber: "TODO_WHATSAPP",
-  email: "hello@cityviewprinters.co.ke",
+  phoneDisplay,
+  phoneHref: `tel:${phoneNumber}`,
+  whatsappNumber: phoneNumber.slice(1),
   /** Human-readable, e.g. "Mon-Sat, 8am-6pm". Shown in the footer and on /contact. */
   hoursDisplay: "TODO_HOURS",
   /** schema.org PostalAddress/OpeningHours format, e.g. "Mo-Sa 08:00-18:00". */
@@ -18,26 +20,16 @@ export const contact = {
   addressLocality: "Kisumu",
   addressCountry: "KE",
   businessName: "CityView Printers",
-  foundedYear: "TODO_FOUNDED",
 };
 
-/**
- * True while any contact detail above is still a TODO_ placeholder.
- *
- * The build-time placeholder gate is currently off (see
- * scripts/check-placeholders.mjs) so main can deploy for a client
- * presentation before the meeting that resolves these. This is the
- * backstop for the consequence that actually matters: while it is true,
- * the site serves noindex and a disallow-all robots.txt, so a fake phone
- * number and invented opening hours cannot be indexed, cached or shown in
- * a search result for a real business.
- *
- * Derived, not a second switch to flip: it goes false on its own the
- * moment the real values replace the placeholders.
- */
-export const hasPlaceholderContact = Object.values(contact).some(
-  (value) => typeof value === "string" && value.startsWith("TODO_"),
-);
+export function hasContactDetail(value: string) {
+  return value.trim() !== "" && !value.includes("TODO_");
+}
+
+export const hasContactPhone = hasContactDetail(contact.phoneDisplay) && hasContactDetail(contact.phoneHref);
+
+// The site stays out of search while the studio's contact details are pending.
+export const hasPlaceholderContact = Object.values(contact).some((value) => !hasContactDetail(value));
 
 /**
  * A search-query maps link degrades sensibly without a confirmed
@@ -66,5 +58,9 @@ export function whatsappLink(serviceName?: string) {
   const message = serviceName
     ? `Hi CityView, I'd like a quote for ${serviceName}.`
     : "Hi CityView, I'd like to know more about your services.";
+  return whatsappMessageLink(message);
+}
+
+export function whatsappMessageLink(message: string) {
   return `https://wa.me/${contact.whatsappNumber}?text=${encodeURIComponent(message)}`;
 }

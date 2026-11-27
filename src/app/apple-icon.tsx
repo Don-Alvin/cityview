@@ -23,11 +23,11 @@ export default function AppleIcon() {
           justifyContent: "center",
           gap: 9,
           paddingBottom: 36,
-          background: "#141312",
+          background: "#0d2444",
         }}
       >
         {bars.map((height) => (
-          <div key={height} style={{ width: 20, height, background: "#eaa221", borderRadius: 3 }} />
+          <div key={height} style={{ width: 20, height, background: "#d12f44", borderRadius: 3 }} />
         ))}
       </div>
     ),

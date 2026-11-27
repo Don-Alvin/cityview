@@ -8,8 +8,8 @@ export function PriceFrom({ amount }: { amount?: number }) {
   if (amount === undefined) return null;
 
   return (
-    <p className="text-body-sm text-white/70">
-      From <span className="font-medium text-white">KES {amount.toLocaleString("en-KE")}</span>
+    <p className="site-price">
+      From <strong>KES {amount.toLocaleString("en-KE")}</strong>
     </p>
   );
 }

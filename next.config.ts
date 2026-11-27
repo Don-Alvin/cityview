@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [{ source: "/work", destination: "/gallery", permanent: true }];
+  },
   images: {
     // IMPLEMENTATION.md: real photography at quality={80}. Next 16
     // only serves qualities explicitly allow-listed here; 75 is the

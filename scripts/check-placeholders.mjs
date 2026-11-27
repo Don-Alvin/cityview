@@ -73,9 +73,8 @@ if (hits.length > 0) {
     [
       "",
       "  ! The placeholder gate is OFF (FAIL_ON_PLACEHOLDERS in this file).",
-      "  ! This build ships with the placeholders listed above visible on the",
-      "  ! page. The site is serving noindex while they remain, so they cannot",
-      "  ! be indexed, but anyone who opens the URL will see them.",
+      "  ! The contact details listed above are still pending.",
+      "  ! The site serves noindex until those details are filled in.",
       "  ! Set FAIL_ON_PLACEHOLDERS back to true once the real details land.",
       "",
     ].join("\n"),

@@ -1,8 +1,9 @@
 export type Service = {
-  slug: string;
+  slug: "commercial-printing" | "branding-and-signage" | "apparel-and-merchandise" | "custom-packaging";
   title: string;
   /** Home page row copy. */
   teaser: string;
+  previewImage?: { src: string; alt: string };
   /** Service page copy. */
   metaTitle: string;
   metaDescription: string;
@@ -31,11 +32,15 @@ export const services: Service[] = [
     slug: "commercial-printing",
     title: "Commercial Printing",
     teaser: "Business cards, flyers, brochures, booklets and office stationery.",
+    previewImage: {
+      src: "/gallery/WhatsApp%20Image%202026-11-10%20at%2009.44.20.jpeg",
+      alt: "Printed business cards laid out on a worktable",
+    },
     metaTitle: "Commercial Printing | Business Cards & Brochures in Kisumu",
     metaDescription:
-      "Business cards, flyers, brochures, booklets and office stationery, printed in Kisumu. Beautiful, useful print for the moments that put your business in front of people.",
+      "CityView Printers produces business cards, flyers, brochures, booklets and office stationery in Kisumu.",
     intro:
-      "Beautiful, useful print for the moments that put your business in front of people.",
+      "We print materials for promotions, events and everyday business, from flyers and brochures to menus and stationery.",
     products: [
       "Business cards",
       "Flyers and leaflets",
@@ -49,11 +54,15 @@ export const services: Service[] = [
     slug: "branding-and-signage",
     title: "Branding & Signage",
     teaser: "Shop signs, banners, vehicle graphics and event displays.",
+    previewImage: {
+      src: "/gallery/WhatsApp%20Image%202026-11-10%20at%2009.44.37.jpeg",
+      alt: "A branded resort sign being assembled",
+    },
     metaTitle: "Branding & Signage | Shopfronts & Banners in Kisumu",
     metaDescription:
-      "Shopfront signage, roll-up banners, vehicle branding and event displays in Kisumu. Give your business a visible, consistent presence, on the street or at your next event.",
+      "CityView Printers makes shopfront signs, roll-up banners, vehicle graphics and event displays in Kisumu.",
     intro:
-      "Give your business a visible, consistent presence, whether on the street or at your next event.",
+      "We make signs for shops and offices, graphics for vehicles and windows, and branded displays for events.",
     products: [
       "Shopfront and indoor signage",
       "Roll-up banners and event displays",
@@ -65,12 +74,16 @@ export const services: Service[] = [
   {
     slug: "apparel-and-merchandise",
     title: "Apparel & Merchandise",
-    teaser: "T-shirts, tote bags, mugs, caps and useful promotional items.",
+    teaser: "T-shirts, tote bags, mugs, caps and promotional gifts.",
+    previewImage: {
+      src: "/gallery/WhatsApp%20Image%202026-11-10%20at%2009.34.23.jpeg",
+      alt: "Blue polo shirt with a gold anniversary design",
+    },
     metaTitle: "Apparel & Merchandise | Branded T-Shirts & Gifts in Kisumu",
     metaDescription:
-      "Branded T-shirts, caps, tote bags, mugs and promotional gifts in Kisumu. Make your identity part of someone's day with useful branded items.",
+      "CityView Printers produces branded T-shirts, caps, tote bags, mugs and promotional gifts in Kisumu.",
     intro:
-      "Make your identity part of someone's day with useful branded items and thoughtful presentation.",
+      "Put your logo or artwork on clothing and merchandise for your team, event or promotion.",
     products: [
       "Branded T-shirts and workwear",
       "Caps and headwear",
@@ -82,11 +95,15 @@ export const services: Service[] = [
   {
     slug: "custom-packaging",
     title: "Custom Packaging",
-    teaser: "Boxes, bags, labels and branded packaging built around your product.",
+    teaser: "Custom boxes, printed bags, labels and packaging inserts.",
+    previewImage: {
+      src: "/images/cityview-print-showcase.webp",
+      alt: "Red, white and navy printed boxes and a branded tote bag",
+    },
     metaTitle: "Custom Packaging | Branded Boxes & Bags in Kisumu",
     metaDescription:
-      "Custom boxes, branded bags, product labels and packaging built around your product, printed in Kisumu. Every touchpoint carries the same identity.",
-    intro: "Packaging built around your product, carrying the same identity as everything else you make.",
+      "CityView Printers produces custom boxes, branded bags, labels and packaging inserts in Kisumu.",
+    intro: "We make printed packaging to fit your products, with your artwork carried across boxes, bags and labels.",
     products: [
       "Custom boxes",
       "Branded paper and gift bags",
