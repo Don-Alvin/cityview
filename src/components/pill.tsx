@@ -1,11 +1,11 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import Link from "next/link";
 
-export type PillVariant = "solid" | "light" | "outline" | "outline-light";
+export type PillVariant = "solid" | "light" | "outline" | "outline-light" | "action";
 
-const variants: Record<PillVariant, string> = {
-  solid: "bg-ink text-white hover:bg-brand",
-  light: "bg-white text-brand-deep hover:bg-brand hover:text-brand-deep",
+const variants: Record<Exclude<PillVariant, "action">, string> = {
+  solid: "bg-brand text-on-brand hover:bg-brand-deep",
+  light: "bg-white text-brand-deep hover:bg-brand hover:text-on-brand",
   outline: "border border-current bg-transparent text-ink hover:bg-ink hover:text-white",
   // For an outline pill on a dark ground (the footer's white-bordered
   // trigger). Kept as its own variant rather than overriding `outline`'s
@@ -18,8 +18,8 @@ const variants: Record<PillVariant, string> = {
   "outline-light": "border border-white bg-transparent text-white hover:bg-white hover:text-brand-deep",
 };
 
-function Arrow() {
-  return (
+function Arrow({ circle }: { circle: boolean }) {
+  const icon = (
     <svg
       viewBox="0 0 24 24"
       aria-hidden="true"
@@ -28,15 +28,23 @@ function Arrow() {
       <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
+  return circle ? (
+    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-ink text-white transition-colors duration-300 group-hover:bg-accent">
+      {icon}
+    </span>
+  ) : icon;
 }
 
-function pillClasses(variant: keyof typeof variants, className: string) {
+function pillClasses(variant: PillVariant, className: string) {
+  if (variant === "action") {
+    return `group inline-flex items-center justify-between gap-4 rounded-pill border border-hairline bg-surface-card py-2 pr-2 pl-6 text-sm font-medium text-ink motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out-expo motion-safe:hover:scale-105 ${className}`;
+  }
   return `group inline-flex items-center justify-center gap-[0.55rem] rounded-pill px-7 py-[0.875rem] text-body-sm font-medium uppercase tracking-[0.07em] transition-colors duration-[250ms] ${variants[variant]} ${className}`;
 }
 
 type PillLinkProps = {
   href: string;
-  variant?: keyof typeof variants;
+  variant?: PillVariant;
   icon?: boolean;
   children: ReactNode;
   className?: string;
@@ -44,20 +52,15 @@ type PillLinkProps = {
 
 type PillButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "children"> & {
   href?: undefined;
-  variant?: keyof typeof variants;
+  variant?: PillVariant;
   icon?: boolean;
   children: ReactNode;
   className?: string;
 };
 
 /**
- * DESIGN.md section 4: the only button. Three variants, pill radius,
- * uppercase body-sm/500 at 0.07em tracking. The arrow's hover nudge is a
- * plain CSS transform on Tailwind's `group-hover` rather than the
- * mockup's spring-physics JS (`--spring-x` driven by a
- * requestAnimationFrame loop): same visual read, no JS needed, and
- * DESIGN.md's own motion constraints only ask for transform/opacity,
- * which this already is.
+ * Shared pill styling for buttons and navigation links. The action
+ * variant adds the circular icon and reduced-motion-aware hover scale.
  */
 export function Pill(props: PillLinkProps | PillButtonProps) {
   if (props.href) {
@@ -65,7 +68,7 @@ export function Pill(props: PillLinkProps | PillButtonProps) {
     return (
       <Link href={href} className={pillClasses(variant, className)}>
         {children}
-        {icon ? <Arrow /> : null}
+        {icon ? <Arrow circle={variant === "action"} /> : null}
       </Link>
     );
   }
@@ -74,7 +77,7 @@ export function Pill(props: PillLinkProps | PillButtonProps) {
   return (
     <button type="button" className={pillClasses(variant, className)} {...buttonProps}>
       {children}
-      {icon ? <Arrow /> : null}
+      {icon ? <Arrow circle={variant === "action"} /> : null}
     </button>
   );
 }

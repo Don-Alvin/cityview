@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { CardSection, Eyebrow } from "@/components/layout-primitives";
 import { QuoteForm } from "@/components/quote-form";
+import site from "@/components/site.module.css";
 import { services } from "@/content/services";
-import { whatsappLink } from "@/content/contact";
+import styles from "../editorial.module.css";
 
 export const metadata: Metadata = {
   title: "Request a Quote",
@@ -12,14 +11,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/quote" },
 };
 
-/**
- * IMPLEMENTATION.md build order step 4: the structured alternative to
- * WhatsApp, with the fields the client actually needs to price a job
- * (service, size, quantity, finish, deadline, name, phone), rather than
- * the quick name/email/project modal every "Request a quote" pill already
- * opens. Reads `?service=` so a service page's link can arrive with the
- * right option preselected.
- */
 export default async function QuotePage({
   searchParams,
 }: {
@@ -29,17 +20,16 @@ export default async function QuotePage({
   const initialService = services.find((entry) => entry.slug === service)?.title;
 
   return (
-    <CardSection ground="background" id="quote" labelledBy="quote-title" className="px-6 py-14 sm:px-10">
-      <Eyebrow>Request a quote</Eyebrow>
-      <h1 id="quote-title" className="mt-2 text-section-title font-medium">
-        Tell us what you want to make
-      </h1>
-      <p className="mt-4 max-w-[34rem] text-body-lg leading-[1.6] text-ink-soft">
-        Give us the details of the job and we will come back with pricing. Prefer to talk it
-        through instead? <Link href={whatsappLink()} className="underline underline-offset-4 hover:text-ink">Message us on WhatsApp</Link>.
-      </p>
-
-      <QuoteForm services={services} initialService={initialService} />
-    </CardSection>
+    <section id="quote" className={`site-grid ${styles.quotePage}`} aria-labelledby="quote-title">
+      <div className={styles.quoteIntro}>
+        <h1 id="quote-title" className={site.pageTitle}>Request a quote</h1>
+        <p className={site.prose}>
+          Fill in your project details. WhatsApp opens with your message ready to send.
+        </p>
+      </div>
+      <div className={styles.quoteBody}>
+        <QuoteForm key={initialService ?? ""} services={services} initialService={initialService} />
+      </div>
+    </section>
   );
 }

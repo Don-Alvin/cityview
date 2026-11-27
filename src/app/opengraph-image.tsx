@@ -13,14 +13,11 @@ export const contentType = "image/png";
  * about text rendered into images, after a mockup once shipped with
  * "TOMORIROW" printed on a bag).
  *
- * The colours below are the one place in the codebase that repeats a hex
- * instead of reading a token: Satori resolves no CSS custom properties,
- * so `var(--color-brand-deep)` would render as nothing. globals.css stays
- * the source of truth; if the client moves the brand colours, these two
- * values move with them. Flagged in report.md so that isn't a surprise.
+ * Satori does not resolve CSS custom properties. Keep these values in
+ * sync with the brand tokens in globals.css and the site icons.
  */
-const BRAND_DEEP = "#141312";
-const BRAND = "#eaa221";
+const BRAND_DEEP = "#0d2444";
+const BRAND = "#d12f44";
 
 const bars = [30, 52, 72, 42];
 

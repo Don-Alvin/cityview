@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CardSection, Eyebrow } from "@/components/layout-primitives";
-import { Pill } from "@/components/pill";
-import { contact, mapsEmbedSrc, mapsLink, whatsappLink } from "@/content/contact";
+import { PageIntro } from "@/components/layout-primitives";
+import site from "@/components/site.module.css";
+import { contact, hasContactDetail, hasContactPhone, mapsEmbedSrc, mapsLink, whatsappLink } from "@/content/contact";
+import styles from "../editorial.module.css";
 
 export const metadata: Metadata = {
   title: "Contact Us",
   description:
-    "Get in touch with CityView Printers in Kisumu by phone, WhatsApp or email, or find us on the map.",
+    "Call CityView Printers in Kisumu, message us on WhatsApp or request a quote for your project.",
   alternates: { canonical: "/contact" },
 };
 
@@ -17,91 +18,79 @@ export const metadata: Metadata = {
  * the single source of truth, so this stays correct the moment real
  * details replace the TODO_ placeholders, without touching this file.
  */
+const streetAddress = hasContactDetail(contact.streetAddress) ? contact.streetAddress : undefined;
+
 function localBusinessJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: contact.businessName,
-    telephone: contact.phoneHref.replace("tel:", ""),
-    email: contact.email,
+    telephone: hasContactPhone ? contact.phoneHref.replace("tel:", "") : undefined,
     address: {
       "@type": "PostalAddress",
-      streetAddress: contact.streetAddress,
+      streetAddress,
       addressLocality: contact.addressLocality,
       addressCountry: contact.addressCountry,
     },
-    openingHours: contact.openingHours,
+    openingHours: hasContactDetail(contact.openingHours) ? contact.openingHours : undefined,
   };
 }
 
 export default function ContactPage() {
   return (
-    <CardSection ground="background" id="contact" labelledBy="contact-title" className="px-6 py-14 sm:px-10">
-      <Eyebrow>Get in touch</Eyebrow>
-      <h1 id="contact-title" className="mt-2 text-section-title font-medium">
-        Get in touch
-      </h1>
-      <p className="mt-4 max-w-[34rem] text-body-lg leading-[1.6] text-ink-soft">
-        Call, WhatsApp or drop by the studio. For a full job brief, use our{" "}
-        <Link href="/quote" className="underline underline-offset-4 hover:text-ink">
-          quote form
-        </Link>
-        .
-      </p>
+    <div id="contact">
+      <PageIntro id="contact-title" title="Get in touch">
+        <p>
+          Call or message our Kisumu team on WhatsApp. For pricing, tell us about your project in the{" "}
+          <Link href="/quote" className="text-link">quote form</Link>.
+        </p>
+      </PageIntro>
 
-      <div className="mt-12 grid gap-8 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
-        <address className="not-italic">
-          <dl className="flex flex-col gap-6 border-t border-hairline pt-5">
+      <div className={`site-grid ${site.pageLead} ${styles.contact}`}>
+        <address className={styles.contactDetails}>
+          <dl>
+            {hasContactPhone && (
+              <div>
+                <dt>Phone</dt>
+                <dd>
+                  <a href={contact.phoneHref} className="text-link">{contact.phoneDisplay}</a>
+                </dd>
+              </div>
+            )}
             <div>
-              <dt className="text-eyebrow font-medium text-ink-soft">Phone</dt>
-              <dd className="mt-1.5 text-body-lg">
-                <a href={contact.phoneHref} className="hover:text-ink-soft">
+              <dt>WhatsApp</dt>
+              <dd>
+                <Link href={whatsappLink()} className="text-link">
                   {contact.phoneDisplay}
-                </a>
-              </dd>
-            </div>
-            <div>
-              <dt className="text-eyebrow font-medium text-ink-soft">WhatsApp</dt>
-              <dd className="mt-1.5 text-body-lg">
-                <Link href={whatsappLink()} className="hover:text-ink-soft">
-                  {contact.whatsappNumber}
                 </Link>
               </dd>
             </div>
             <div>
-              <dt className="text-eyebrow font-medium text-ink-soft">Email</dt>
-              <dd className="mt-1.5 text-body-lg">
-                <a href={`mailto:${contact.email}`} className="hover:text-ink-soft">
-                  {contact.email}
-                </a>
-              </dd>
-            </div>
-            <div>
-              <dt className="text-eyebrow font-medium text-ink-soft">Studio</dt>
-              <dd className="mt-1.5 text-body-lg leading-[1.5]">
-                {contact.streetAddress}
-                <br />
+              <dt>Location</dt>
+              <dd>
+                {streetAddress && <>{streetAddress}<br /></>}
                 {contact.addressLocality}, Kenya
               </dd>
             </div>
-            <div>
-              <dt className="text-eyebrow font-medium text-ink-soft">Hours</dt>
-              <dd className="mt-1.5 text-body-lg">{contact.hoursDisplay}</dd>
-            </div>
+            {hasContactDetail(contact.hoursDisplay) && (
+              <div>
+                <dt>Opening hours</dt>
+                <dd>{contact.hoursDisplay}</dd>
+              </div>
+            )}
           </dl>
 
-          <Pill href={mapsLink()} icon className="mt-6">
-            Get directions
-          </Pill>
+          <Link href={mapsLink()} className={`site-action ${styles.rowActions}`}>
+            Find us on Google Maps
+          </Link>
         </address>
 
-        <div className="aspect-[4/3] w-full overflow-hidden rounded-card border border-hairline sm:aspect-auto sm:h-full">
+        <div className={styles.map}>
           <iframe
             title="CityView Printers on the map"
             src={mapsEmbedSrc()}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            className="h-full w-full border-0"
           />
         </div>
       </div>
@@ -110,6 +99,6 @@ export default function ContactPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd()) }}
       />
-    </CardSection>
+    </div>
   );
 }

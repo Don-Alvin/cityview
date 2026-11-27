@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { CardSection, Eyebrow } from "@/components/layout-primitives";
-import { Pill } from "@/components/pill";
 import { PriceFrom } from "@/components/price-from";
+import site from "@/components/site.module.css";
 import { getService, services } from "@/content/services";
 import { whatsappLink } from "@/content/contact";
+import styles from "../../editorial.module.css";
 
 export function generateStaticParams() {
   return services.map((service) => ({ slug: service.slug }));
@@ -52,48 +53,43 @@ export default async function ServicePage({
   if (!service) notFound();
 
   return (
-    <CardSection ground="brand-deep" id="service" labelledBy="service-title" className="px-6 py-14 sm:px-10">
-      <Eyebrow light>Our services</Eyebrow>
-      <h1 id="service-title" className="mt-2 text-section-title font-medium">
-        {service.title}
-      </h1>
-      <p className="mt-4 max-w-[36rem] text-body-lg leading-[1.6] text-white/80">{service.intro}</p>
+    <>
+      <header id="service" className={`site-grid ${styles.serviceHero}`}>
+        <div className={styles.serviceLead}>
+          <h1 id="service-title" className={site.pageTitle}>{service.title}</h1>
+          <p className={site.prose}>{service.intro}</p>
+          <Link href={whatsappLink(service.title)} className="site-action">Message us on WhatsApp</Link>
+        </div>
+        {service.previewImage && (
+          <figure className={styles.serviceHeroFigure} data-service={service.slug}>
+            <Image
+              src={service.previewImage.src}
+              alt={service.previewImage.alt}
+              fill
+              quality={80}
+              sizes="(max-width: 760px) 92vw, 45vw"
+            />
+          </figure>
+        )}
+      </header>
 
-      <div className="mt-12 grid gap-6 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
-        <div>
-          <h2 className="text-body-lg font-medium">What we produce</h2>
+      <section className={`site-grid section-gap ${styles.serviceCatalogue}`} aria-labelledby="production-title">
+        <div className={styles.ruleTitle}>
+          <h2 id="production-title" className={site.sectionTitle}>What we produce</h2>
           <PriceFrom amount={service.priceFrom} />
         </div>
-        <ul>
-          {service.products.map((product) => (
-            <li
-              key={product}
-              className="border-t border-white/15 py-4 text-body leading-[1.6] text-white/85 first:border-t-0 sm:first:border-t"
-            >
-              {product}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="mt-12 flex flex-wrap gap-4 border-t border-white/15 pt-8">
-        <Link
-          href={whatsappLink(service.title)}
-          className="inline-flex items-center gap-[0.55rem] rounded-pill bg-white px-7 py-[0.875rem] text-body-sm font-medium uppercase tracking-[0.07em] text-brand-deep hover:bg-brand"
-        >
-          Message us on WhatsApp
-        </Link>
-        <Pill href="/#services" variant="outline-light">
-          Back to all services
-        </Pill>
-      </div>
-
-      <Link
-        href={`/quote?service=${service.slug}`}
-        className="mt-5 inline-block text-body-sm text-white/70 underline underline-offset-4 hover:text-white"
-      >
-        Prefer to fill in a form? Use our detailed quote form
-      </Link>
-    </CardSection>
+        <div className={styles.ruleContent}>
+          <ul className={styles.ruleList} role="list">
+            {service.products.map((product) => <li key={product}>{product}</li>)}
+          </ul>
+          <div className={`site-actions ${styles.rowActions}`}>
+            <Link href={`/quote?service=${service.slug}`} className="text-link">
+              Request a quote online
+            </Link>
+            <Link href="/services" className="text-link">Back to all services</Link>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

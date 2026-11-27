@@ -3,8 +3,8 @@
        brand-deep ground. Authored as SVG rather than a binary .ico so the
        brand mark lives in readable source, and so it replaces the
        create-next-app default favicon that shipped with the scaffold. -->
-  <rect width="32" height="32" rx="7" fill="#141312" />
-  <g fill="#eaa221">
+  <rect width="32" height="32" rx="7" fill="#0d2444" />
+  <g fill="#d12f44">
     <rect x="6" y="18" width="3.6" height="8" rx="0.4" />
     <rect x="11.5" y="12.3" width="3.6" height="13.7" rx="0.4" />
     <rect x="17" y="7" width="3.6" height="19" rx="0.4" />

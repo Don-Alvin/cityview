@@ -1,34 +1,25 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Pill, type PillVariant } from "./pill";
 
 /**
- * Server components (SiteFooter, service pages) can't pass an onClick
- * function prop directly to a Client Component like Pill: event handlers
- * aren't serialisable across the RSC boundary. This is the one place
- * that click-to-open-modal wiring lives, so every "Request a quote"
- * trigger site-wide goes through it.
+ * Connects the shared quote dialog to triggers in server and client layouts.
  */
-export function QuoteTrigger({
-  variant = "solid",
-  className = "",
-  children,
-}: {
-  variant?: PillVariant;
+export function QuoteTrigger({ className, beforeOpen, children }: {
   className?: string;
+  beforeOpen?: () => void;
   children: ReactNode;
 }) {
   return (
-    <Pill
-      variant={variant}
-      icon
+    <button
+      type="button"
       className={className}
       onClick={() => {
+        beforeOpen?.();
         (document.getElementById("quote-modal") as HTMLDialogElement | null)?.showModal();
       }}
     >
       {children}
-    </Pill>
+    </button>
   );
 }
