@@ -22,7 +22,9 @@ export function Features() {
       const chapterObserver = new IntersectionObserver(
         (entries) => {
           const current = entries.find((entry) => entry.isIntersecting);
-          const service = (current?.target as HTMLElement | undefined)?.dataset.service;
+          const service = (current?.target as HTMLElement | undefined)?.dataset.service as
+            | typeof activeService
+            | undefined;
           if (service) setActiveService(service);
         },
         { rootMargin: `-${anchor}px 0px -${height - anchor - 1}px 0px` },
